@@ -1,0 +1,71 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url(../img/fundo.webp);
+    background-position: center;
+    background-size: cover;
+}
+
+header {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu {
+    background-color: rgba(0, 0, 0, 0.6); /* Cor de fundo opaca */
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.menu ul li {
+    display: inline;
+    margin: 0 20px;
+}
+
+.menu ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+}
+
+.menu ul li a:hover {
+    color: #ff6600; /* Cor de destaque quando passa o mouse */
+}
+
+  /* Estilos da div de conteúdo centralizado */
+.centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Centralizar verticalmente */
+}
+
+/* Estilos das divs internas */
+.centered-div {
+    background-color: rgba(0, 0, 0, 0.6); /* Cor de fundo opaca */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra */
+    text-align: center;
+    width: 400px; /* Ajuste a largura conforme necessário */
+    height: 300px; /* Ajuste a altura conforme necessário */
+    margin: 100px; /* Espaçamento entre as divs */
+}
+
+
