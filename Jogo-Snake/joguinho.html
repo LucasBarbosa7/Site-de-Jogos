@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="./joguinho.css">
+    
     <title>Snake Game</title>
-    <link rel="stylesheet" type="text/css" href="./joguinho.css">
 </head>
 <body>
+
   <header>
     <nav class="menu">
         <ul>
@@ -17,129 +22,24 @@
     </nav>
 </header>
 
-  <canvas id="snake" width="400" height="400"></canvas>
-  <button id="restart-button">Reiniciar Jogo</button>
-  <p id="score">Pontuação: 0</p>
-  <p id="game-over">Fim de Jogo</p>
+<h1>🐍Jogo da Cobrinha 🐍</h1>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const canvas = document.getElementById('snake');
-      const ctx = canvas.getContext('2d');
+    <div class="score">score:<span class="score--value">00</span></div>
 
-      const gridSize = 20;
-      const foodColor = 'red';
+    <div class="menu-screen">
+        <span class="game-over">game over</span>
+        <span class="final-score">score <span>00</span></span>
 
-      let snake = [
-        { x: 5, y: 5 },
-        { x: 4, y: 5 },
-        { x: 3, y: 5 },
-      ];
+        <button class="btn-play">
+            <span class="material-symbols-outlined">
+                play_circle
+            </span>
+            
+            Jogar novamente
+        </button>
+    </div>
 
-      let food = { x: 10, y: 10 };
-
-      let direction = 'right';
-      let score = 0;
-
-      let gameInterval;
-
-      const restartButton = document.getElementById('restart-button');
-      restartButton.addEventListener('click', () => {
-        restartGame();
-      });
-
-      // Função para desenhar a cobra
-      function drawSnake() {
-        for (let i = 0; i < snake.length; i++) {
-          ctx.fillStyle = 'green';
-          ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize, gridSize);
-        }
-      }
-
-      // Função para desenhar a comida
-      function drawFood() {
-        ctx.fillStyle = foodColor;
-        ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
-      }
-
-      // Função para mover a cobra
-      function moveSnake() {
-        let newHead = { x: snake[0].x, y: snake[0].y };
-
-        if (direction === 'right') newHead.x += 1;
-        if (direction === 'left') newHead.x -= 1;
-        if (direction === 'up') newHead.y -= 1;
-        if (direction === 'down') newHead.y += 1;
-
-        snake.unshift(newHead);
-
-        if (newHead.x === food.x && newHead.y === food.y) {
-          food = { x: Math.floor(Math.random() * canvas.width / gridSize), y: Math.floor(Math.random() * canvas.height / gridSize) };
-          score += 10;
-        } else {
-          snake.pop();
-        }
-      }
-
-      // Função para verificar colisões
-      function checkCollision() {
-        if (snake[0].x < 0 || snake[0].x >= canvas.width / gridSize || snake[0].y < 0 || snake[0].y >= canvas.height / gridSize) {
-          gameOver();
-        }
-
-        for (let i = 1; i < snake.length; i++) {
-          if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
-            gameOver();
-          }
-        }
-      }
-
-      // Função para lidar com o fim de jogo
-      function gameOver() {
-        clearInterval(gameInterval);
-        document.getElementById('game-over').classList.remove('hidden');
-        restartButton.style.display = 'block';
-      }
-
-      // Função para reiniciar o jogo
-      function restartGame() {
-        snake = [
-          { x: 5, y: 5 },
-          { x: 4, y: 5 },
-          { x: 3, y: 5 },
-        ];
-        food = { x: 10, y: 10 };
-        direction = 'right';
-        score = 0;
-        document.getElementById('score').textContent = 'Pontuação: 0';
-        restartButton.style.display = 'none';
-        document.getElementById('game-over').classList.add('hidden');
-        gameInterval = setInterval(updateGameArea, 100);
-      }
-
-      // Função para atualizar a área de jogo
-      function updateGameArea() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        moveSnake();
-        drawSnake();
-        drawFood();
-        checkCollision();
-        document.getElementById('score').textContent = 'Pontuação: ' + score;
-      }
-
-      // Função para alterar a direção da cobra
-      function changeDirection(event) {
-        if (event.key === 'ArrowRight' && direction !== 'left') direction = 'right';
-        if (event.key === 'ArrowLeft' && direction !== 'right') direction = 'left';
-        if (event.key === 'ArrowUp' && direction !== 'down') direction = 'up';
-        if (event.key === 'ArrowDown' && direction !== 'up') direction = 'down';
-      }
-
-      // Iniciar o jogo
-      window.addEventListener('keydown', changeDirection);
-      gameInterval = setInterval(updateGameArea, 100);
-    });
-  </script>
-  
+    <canvas width="600" height="500"></canvas>
+    <script src="./joguinho.js"></script>
 </body>
 </html>

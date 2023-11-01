@@ -1,0 +1,179 @@
+body {
+    overflow: hidden;
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url(../img/fundo.webp);
+    background-position: center;
+    background-size: cover;
+    
+}
+
+header {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu {
+    background-color: rgba(0, 0, 0, 0.6); /* Cor de fundo opaca */
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.menu ul li {
+    display: inline;
+    margin: 0 20px;
+}
+
+.menu ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+}
+
+.menu ul li a:hover {
+    color: #ff6600; /* Cor de destaque quando passa o mouse */
+}
+
+.container {
+    width: 100%;
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+}
+
+#player,
+#playerJump {
+    position: absolute;
+    bottom: -5px;
+    height: 100px;
+}
+
+.obstaculo {
+    height: 150px;
+    position: absolute;
+    bottom: -5px;
+}
+
+.obstaculoAnimation {
+    animation: obstaculoAnimation 2s infinite linear;
+}
+
+.obstaculoAnimation2 {
+    animation: obstaculoAnimation 1.75s infinite linear;
+}
+
+.obstaculoAnimation3 {
+    animation: obstaculoAnimation 1.5s infinite linear;
+}
+
+.cloud {
+    height: 60px;
+    position: absolute;
+    right: 80px;
+    top: 150px;
+    animation: cloudAnimation 2s infinite linear;
+}
+
+.jump {
+    animation: jump 1s ease-out;
+}
+
+.scores {
+    position: absolute;
+    bottom: 10px;
+    top: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+}
+
+.modalReset {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-transform: uppercase;
+}
+
+.modalReset h1 {
+    color: #333;
+}
+
+.restartButton {
+    background: #333;
+    width: 75px;
+    height: 75px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.restartButton i {
+    font-size: 45px;
+}
+
+@keyframes obstaculoAnimation {
+    from {
+        right: 0;
+    }
+
+    to {
+        right: 100%;
+    }
+}
+
+@keyframes cloudAnimation {
+    from {
+        right: 0;
+    }
+
+    to {
+        right: 100%;
+    }
+}
+
+@keyframes jump {
+    0% {
+        bottom: -5px;
+    }
+
+    50% {
+        bottom: 120px;
+    }
+
+    100% {
+        bottom: -5px;
+    }
+}
+
+#playerJump {
+    display: none;
+}
+
+.imgJogo{
+    width: 100%;
+    height: 100%;
+    margin-top: 10px;
+}

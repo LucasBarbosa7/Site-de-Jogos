@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedra, Papel, Tesoura</title>
+    <link rel="stylesheet" href="./jogo.css">
+    <script src="./jogo.js"></script>
+
+</head>
+<body>
+    <div class="background-square">
+    <header>
+       
+            <nav class="menu">
+                <ul>
+                    <li><a href="../index.html">Página Inicial</a></li>
+                    <li><a href="#">Sobre Nós</a></li>
+                    <li><a href="#">Referências</a></li>
+                </ul>
+            </nav>
+   
+        <h1>Pedra Papel Tesoura</h1>
+
+        <div id="placar" style="background-color: black;">
+            <div id="user" class="jogadores">User</div>
+            <div id="resut">   <p id="pUser">0</p> <p>:</p> <p id="pComp">0</p>   </div>
+            <div id="comp" class="jogadores">Comp</div>
+        </div>
+    </header>
+
+    <main>
+        <div id="divImg1">
+            <img src="../Img/pedra.png" alt="pedra" id="pedra" data-num="0" data-letra="a">
+        </div>
+
+        <div id="divImg2">
+            <img src="../Img/papel.png" alt="papel" id="papel" data-num="1" data-letra="b">
+        </div>
+
+        <div id="divImg3">
+            <img src="../Img/tesoura.png" alt="tesoura"id="tesoura" data-num="2" data-letra="c">
+        </div>
+
+    </main>
+</div>
+    
+</body>
+</html>

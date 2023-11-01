@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./jogoDino.css">
+    <title>Jogo do Dinossauro</title>
+
+</head>
+
+<body>
+
+    <header>
+        <nav class="menu">
+            <ul>
+                <li><a href="../index.html">Página Inicial</a></li>
+                <li><a href="#">Sobre Nós</a></li>
+                <li><a href="#">Referências</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <img class="imgJogo" src="./imgDino/fundocerto2.jpg">
+
+        <!-- Imagem do jogador normal -->
+        <img class="player" src="./imgDino/New Piskel (2).gif" alt="" id="player">
+        <!-- Imagem do jogador durante o pulo -->
+        <img class="player jump" src="./imgDino/pulo.png" alt="" id="playerJump">
+        <img class="obstaculo obstaculoAnimation"
+            src="./imgDino/fogo.png"
+            alt="">
+        <img class="cloud"
+            src="./imgDino/meteoro2.gif">
+        <div class="scores">
+            <div class="score">PONTOS: 0</div>
+        </div>
+        <div class="modalReset">
+            <h1>Reiniciar</h1>
+            <div class="restartButton" onclick="restartGame()">
+                <i class="fa-solid fa-rotate-right" style="color: #ffffff;"></i>
+            </div>
+        </div>
+    </div>
+    
+    <script src="./jogoDino.js"></script>
+    <script src="https://kit.fontawesome.com/f077545227.js" crossorigin="anonymous"></script>
+</body>
+</html>

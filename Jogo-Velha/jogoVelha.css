@@ -1,4 +1,11 @@
-body {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: cursive;
+  }
+
+ body {
     margin: 0;
     padding: 0;
     display: flex;
@@ -47,28 +54,27 @@ header {
 .menu ul li a:hover {
     color: #ff6600; /* Cor de destaque quando passa o mouse */
 }
-
-.centered-container {
+  
+  main {
     display: flex;
-    flex-wrap: wrap; /* Quebra as imagens em uma nova linha quando o espaço não é suficiente */
-    justify-content: center;
-    align-items: center;
-    margin: auto; /* Centraliza horizontalmente */
-    padding: auto; /* Adicione preenchimento para evitar que as imagens toquem nas bordas da tela */
-}
-
-.centered-div {
-    margin: 10px; /* Espaçamento entre as imagens */
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  h1 {
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.6); /* Cor de fundo opaca */
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra */
-}
-
-/* Remova os atributos width e height das imagens para permitir que elas se ajustem dinamicamente */
-.centered-div img {
-    height: 10; /* Mantém a proporção da imagem */
-}
-
-
+    color: white;
+  }
+  .game {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  
+  .game button {
+    width: 150px;
+    height: 150px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 100px;
+    background: #f7f7f7;
+  }

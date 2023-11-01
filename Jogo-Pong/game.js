@@ -1,7 +1,7 @@
 // Inicialização do canvas
 const canvas = document.createElement('canvas');
-canvas.width = 800;
-canvas.height = 500;
+canvas.width = 1300;
+canvas.height = 530;
 document.body.appendChild(canvas);
 const ctx = canvas.getContext('2d');
 document.title = 'Pong Game';

@@ -1,75 +1,109 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
 body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-image: url(../../../img/fundo.webp);
-    background-position: center;
-    background-size: cover;
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 98vh;
+  background-image: url(../img/fundo.webp);
+  background-position: center;
+  background-size: cover;
+  flex-direction: column;
+  color: white;
 }
 
 header {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .menu {
-    background-color: rgba(0, 0, 0, 0.6); /* Cor de fundo opaca */
-    padding: 10px 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Cor de fundo opaca */
+  padding: 10px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    text-align: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
 
 .menu ul li {
-    display: inline;
-    margin: 0 20px;
+  display: inline;
+  margin: 0 20px;
 }
 
 .menu ul li a {
-    text-decoration: none;
-    color: #fff;
-    font-size: 18px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 18px;
 }
 
 .menu ul li a:hover {
-    color: #ff6600; /* Cor de destaque quando passa o mouse */
+  color: #ff6600; /* Cor de destaque quando passa o mouse */
 }
 
-  canvas {
-    border: 2px solid #fff;
-    background-color: rgba(0, 0, 0, 0.6); /* Cor de fundo opaca */
-  }
+canvas {
+    background-color: #111;
+}
 
-  #restart-button {
+.score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.8rem;
+}
+
+.score--value {
+    font-weight: 700;
+    font-size: 4.5rem;
+    display: block;
+    margin-top: -10px;
+}
+
+.menu-screen {
+    position: absolute;
     display: none;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+}
+
+.game-over {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 3rem;
+}
+
+.final-score {
+    font-weight: 500;
+    font-size: 1.5rem;
+}
+
+.btn-play {
     border: none;
+    border-radius: 100px;
+    padding: 10px 15px 10px 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f10a0a;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
     cursor: pointer;
-  }
+}
 
-  #score {
-    color: white;
-  }
-
-  #game-over {
-    display: none;
-    color: red;
-    font-size: 24px;
-    font-weight: bold;
-  }
+h1{
+  margin: 10px;
+}
