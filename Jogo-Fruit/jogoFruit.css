@@ -1,7 +1,8 @@
 body {
     margin: 0;
-    background-color: #000;
-    background-image: radial-gradient(ellipse at top, #335476 0.0%, #31506e 11.1%, #304b67 22.2%, #2f4760 33.3%, #2d4359 44.4%, #2c3f51 55.6%, #2a3a4a 66.7%, #293643 77.8%, #28323d 88.9%, #262e36 100.0%);
+    background-image: url('../Img/fundo.webp');
+    background-position: center;
+    background-size: cover;
     height: 100vh;
     overflow: hidden;
   
@@ -10,6 +11,8 @@ body {
     letter-spacing: 0.06em;
     color: rgba(255, 255, 255, 0.75);
   }
+
+  
   
   #c {
     display: block;

@@ -1241,11 +1241,11 @@ function renderScoreHud() {
     scoreNode.style.display = 'none';
     cubeCountNode.style.opacity = 1;
   } else {
-    scoreNode.innerText = `SCORE: ${state.game.score}`;
+    scoreNode.innerText = `PONTOS: ${state.game.score}`;
     scoreNode.style.display = 'block';
     cubeCountNode.style.opacity = 0.65 ;
   }
-  cubeCountNode.innerText = `CUBES SMASHED: ${state.game.cubeCount}`;
+  cubeCountNode.innerText = `CUBOS CORTADOS: ${state.game.cubeCount}`;
 }
 
 renderScoreHud();
@@ -1312,9 +1312,9 @@ function renderMenus() {
     case MENU_SCORE:
       finalScoreLblNode.textContent = formatNumber(state.game.score);
       if (isNewHighScore()) {
-        highScoreLblNode.textContent = 'New High Score!';
+        highScoreLblNode.textContent = 'Nova Pontuação!';
       } else {
-        highScoreLblNode.textContent = `High Score: ${formatNumber(getHighScore())}`;
+        highScoreLblNode.textContent = `Maior Pontuação: ${formatNumber(getHighScore())}`;
       }
       showMenu(menuScoreNode);
       break;

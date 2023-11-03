@@ -15,7 +15,6 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: Arial, sans-serif;
 }
 
 .menu {
@@ -47,20 +46,4 @@ header {
 
 .menu ul li a:hover {
     color: #ff6600; /* Cor de destaque quando passa o mouse */
-}
-
-#game-container {
-    text-align: center;
-    position: relative;
-}
-
-canvas {
-    border: 2px solid white;
-    margin: 0 auto; /* Centraliza o canvas horizontalmente */
-}
-
-#score {
-    color: white;
-    font-size: 24px;
-    margin-top: 10px;
 }
