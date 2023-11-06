@@ -36,6 +36,13 @@ Descrição: O Jogo da Velha é uma versão digital do clássico jogo de tabulei
 Características Destacadas: Modo de dois jogadores, estratégia da IA ajustável, interface amigável.
 Tecnologias Usadas: HTML, CSS, JavaScript.
 
+Pedra, Papel, Tesoura
+
+Descrição: O jogo de Pedra, Papel, Tesoura é um clássico jogo de decisão, onde você compete contra o computador em uma partida rápida e divertida.
+Características Destacadas: Escolha entre pedra, papel ou tesoura, interface simples e intuitiva.
+Tecnologias Usadas: HTML, CSS, JavaScript.
+
+
 Como Fizemos Isso
 
 Nossa equipe é composta por desenvolvedores talentosos e designers criativos que dedicaram seu tempo e esforço para criar jogos autênticos e envolventes. Aqui está uma breve visão geral do processo de desenvolvimento:
@@ -55,6 +62,8 @@ Jogo do Dino (inspirado no jogo do Chrome)
 Pong (inspirado no Pong original da Atari)
 Jogo Snake (inspirado em várias versões do Snake)
 Jogo da Velha (inspirado no jogo de tabuleiro clássico)
+Jogo Pedra, Papel, Tesoura (jogo clássico que todos conhecem e adoram. Mantivemos a simplicidade e a diversão deste jogo atemporal)
+
 Nós buscamos proporcionar uma experiência autêntica, enquanto adicionamos elementos modernos e inovações criativas aos jogos.
 
 Obrigado por visitar o Mundo dos Joguinhos. Esperamos que você desfrute dos nossos jogos e continue voltando para mais diversão e desafios!
