@@ -1,218 +1,115 @@
-// Seleciona o elemento de canvas e obtém o contexto 2D
-const canvas = document.querySelector("canvas")
-const ctx = canvas.getContext("2d")
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
 
-// Seleciona elementos de interface do usuário
-const score = document.querySelector(".score--value")
-const finalScore = document.querySelector(".final-score > span")
-const menu = document.querySelector(".menu-screen")
-const buttonPlay = document.querySelector(".btn-play")
+    const gridSize = 20;
+    const foodColor = 'red';
 
-// Cria um objeto de áudio para efeitos sonoros
-const audio = new Audio("../assets/audio.mp3")
+    let snake = [
+        { x: 5, y: 5 },
+        { x: 4, y: 5 },
+        { x: 3, y: 5 },
+    ];
 
-// Define o tamanho de cada célula no jogo
-const size = 30
+    let food = { x: 10, y: 10 };
 
-// Define a posição inicial da cobra
-const initialPosition = { x: 270, y: 240 }
-let snake = [initialPosition]
+    let direction = 'right';
+    let score = 0;
 
-// Função para incrementar a pontuação
-const incrementScore = () => {
-    score.innerText = +score.innerText + 10
-}
+    const restartButton = document.getElementById('restart-button');
+    const gameOverElement = document.getElementById('game-over');
 
-// Gera um número aleatório entre min e max
-const randomNumber = (min, max) => {
-    return Math.round(Math.random() * (max - min) + min)
-}
+    // Função para desenhar a cobra
+    function drawSnake() {
+        for (let i = 0; i < snake.length; i++) {
+            ctx.fillStyle = 'green';
+            ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize, gridSize);
+        }
+    }
 
-// Gera uma posição aleatória para o alimento
-const randomPosition = () => {
-    const number = randomNumber(0, canvas.width - size)
-    return Math.round(number / 30) * 30
-}
+    // Função para desenhar a comida
+    function drawFood() {
+        ctx.fillStyle = foodColor;
+        ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+    }
 
-// Gera uma cor aleatória para o alimento
-const randomColor = () => {
-    const red = randomNumber(0, 255)
-    const green = randomNumber(0, 255)
-    const blue = randomNumber(0, 255)
+    // Função para mover a cobra
+    function moveSnake() {
+        let newHead = { x: snake[0].x, y: snake[0].y };
 
-    return `rgb(${red}, ${green}, ${blue})`
-}
+        if (direction === 'right') newHead.x += 1;
+        if (direction === 'left') newHead.x -= 1;
+        if (direction === 'up') newHead.y -= 1;
+        if (direction === 'down') newHead.y += 1;
 
-// Objeto que representa o alimento
-const food = {
-    x: randomPosition(),
-    y: randomPosition(),
-    color: randomColor()
-}
+        snake.unshift(newHead);
 
-let direction, loopId
+        if (newHead.x === food.x && newHead.y === food.y) {
+            food = { x: Math.floor(Math.random() * canvas.width / gridSize), y: Math.floor(Math.random() * canvas.height / gridSize) };
+            score += 10;
+        } else {
+            snake.pop();
+        }
+    }
 
-// Função para desenhar o alimento na tela
-const drawFood = () => {
-    const { x, y, color } = food
-
-    ctx.shadowColor = color
-    ctx.shadowBlur = 6
-    ctx.fillStyle = color
-    ctx.fillRect(x, y, size, size)
-    ctx.shadowBlur = 0
-}
-
-// Função para desenhar a cobra na tela
-const drawSnake = () => {
-    ctx.fillStyle = "#ddd"
-
-    snake.forEach((position, index) => {
-        if (index == snake.length - 1) {
-            ctx.fillStyle = "white"
+    // Função para verificar colisões
+    function checkCollision() {
+        if (snake[0].x < 0 || snake[0].x >= canvas.width / gridSize || snake[0].y < 0 || snake[0].y >= canvas.height / gridSize) {
+            gameOver();
         }
 
-        ctx.fillRect(position.x, position.y, size, size)
-    })
-}
-
-// Função para mover a cobra
-const moveSnake = () => {
-    if (!direction) return
-
-    const head = snake[snake.length - 1]
-
-    if (direction == "right") {
-        snake.push({ x: head.x + size, y: head.y })
-    }
-
-    if (direction == "left") {
-        snake.push({ x: head.x - size, y: head.y })
-    }
-
-    if (direction == "down") {
-        snake.push({ x: head.x, y: head.y + size })
-    }
-
-    if (direction == "up") {
-        snake.push({ x: head.x, y: head.y - size })
-    }
-
-    snake.shift()
-}
-
-// Função para desenhar a grade na tela
-const drawGrid = () => {
-    ctx.lineWidth = 1
-    ctx.strokeStyle = "#191919"
-
-    for (let i = 30; i < canvas.width; i += 30) {
-        ctx.beginPath()
-        ctx.lineTo(i, 0)
-        ctx.lineTo(i, 600)
-        ctx.stroke()
-
-        ctx.beginPath()
-        ctx.lineTo(0, i)
-        ctx.lineTo(600, i)
-        ctx.stroke()
-    }
-}
-
-// Função para verificar se a cobra comeu o alimento
-const chackEat = () => {
-    const head = snake[snake.length - 1]
-
-    if (head.x == food.x && head.y == food.y) {
-        incrementScore()
-        snake.push(head)
-        audio.play()
-
-        let x = randomPosition()
-        let y = randomPosition()
-
-        while (snake.find((position) => position.x == x && position.y == y)) {
-            x = randomPosition()
-            y = randomPosition()
+        for (let i = 1; i < snake.length; i++) {
+            if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+                gameOver();
+            }
         }
-
-        food.x = x
-        food.y = y
-        food.color = randomColor()
-    }
-}
-
-// Função para verificar colisões (com parede ou consigo mesma)
-const checkCollision = () => {
-    const head = snake[snake.length - 1]
-    const canvasLimit = canvas.width - size
-    const neckIndex = snake.length - 2
-
-    const wallCollision =
-        head.x < 0 || head.x > canvasLimit || head.y < 0 || head.y > canvasLimit
-
-    const selfCollision = snake.find((position, index) => {
-        return index < neckIndex && position.x == head.x && position.y == head.y
-    })
-
-    if (wallCollision || selfCollision) {
-        gameOver()
-    }
-}
-
-// Função chamada quando o jogo termina
-const gameOver = () => {
-    direction = undefined
-
-    menu.style.display = "flex"
-    finalScore.innerText = score.innerText
-    canvas.style.filter = "blur(2px)"
-}
-
-// Função principal que cria um loop de jogo
-const gameLoop = () => {
-    clearInterval(loopId)
-
-    ctx.clearRect(0, 0, 600, 600)
-    drawGrid()
-    drawFood()
-    moveSnake()
-    drawSnake()
-    chackEat()
-    checkCollision()
-
-    loopId = setTimeout(() => {
-        gameLoop()
-    }, 150)
-}
-
-// Inicializa o loop do jogo
-gameLoop()
-
-// Evento para capturar as teclas pressionadas
-document.addEventListener("keydown", ({ key }) => {
-    if (key == "ArrowRight" && direction != "left") {
-        direction = "right"
     }
 
-    if (key == "ArrowLeft" && direction != "right") {
-        direction = "left"
+    // Função para lidar com o fim de jogo
+    function gameOver() {
+        clearInterval(game);
+        gameOverElement.classList.remove('hidden');
+        restartButton.style.display = 'block';
     }
 
-    if (key == "ArrowDown" && direction != "up") {
-        direction = "down"
+    function restartGame() {
+        snake = [
+            { x: 5, y: 5 },
+            { x: 4, y: 5 },
+            { x: 3, y: 5 },
+        ];
+        food = { x: 10, y: 10 };
+        direction = 'right';
+        score = 0;
+        restartButton.style.display = 'none';
+        gameOverElement.classList.add('hidden');
+        game = setInterval(updateGameArea, 100); // Iniciar um novo loop de jogo
     }
 
-    if (key == "ArrowUp" && direction != "down") {
-        direction = "up"
+    // Ouvinte de eventos para o botão "Jogar novamente"
+    restartButton.addEventListener('click', restartGame);
+
+    // Função para atualizar a área de jogo
+    function updateGameArea() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        moveSnake();
+        drawSnake();
+        drawFood();
+        checkCollision();
+        document.getElementById('score').textContent = 'Pontuação: ' + score;
     }
-})
 
-// Evento para reiniciar o jogo
-buttonPlay.addEventListener("click", () => {
-    score.innerText = "00"
-    menu.style.display = "none"
-    canvas.style.filter = "none"
+    // Função para alterar a direção da cobra
+    function changeDirection(event) {
+        if (event.key === 'ArrowRight' && direction !== 'left') direction = 'right';
+        if (event.key === 'ArrowLeft' && direction !== 'right') direction = 'left';
+        if (event.key === 'ArrowUp' && direction !== 'down') direction = 'up';
+        if (event.key === 'ArrowDown' && direction !== 'up') direction = 'down';
+    }
 
-    snake = [initialPosition]
-})
+    // Iniciar o jogo
+    window.addEventListener('keydown', changeDirection);
+    let game = setInterval(updateGameArea, 100);
+
+    restartButton.addEventListener('click', restartGame);
+});
