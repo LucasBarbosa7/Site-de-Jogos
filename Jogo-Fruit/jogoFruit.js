@@ -1,86 +1,89 @@
-let gameSpeed = 1;
+let gameSpeed = 1; // Define a velocidade inicial do jogo.
 
+// Define objetos de cor para várias cores.
 const BLUE = { r: 0x67, g: 0xd7, b: 0xf0 };
 const GREEN = { r: 0xa6, g: 0xe0, b: 0x2c };
 const PINK = { r: 0xfa, g: 0x24, b: 0x73 };
 const ORANGE = { r: 0xfe, g: 0x95, b: 0x22 };
-const allColors = [BLUE, GREEN, PINK, ORANGE];
+const allColors = [BLUE, GREEN, PINK, ORANGE]; // Armazena essas cores em um array.
 
+// Define uma função para calcular o atraso de spawn para elementos do jogo.
 const getSpawnDelay = () => {
   const spawnDelayMax = 1400;
   const spawnDelayMin = 550;
-  const spawnDelay = spawnDelayMax - state.game.cubeCount * 3.1;
-  return Math.max(spawnDelay, spawnDelayMin);
+  const spawnDelay = spawnDelayMax - state.game.cubeCount * 3.1; // Ajusta o atraso de spawn com base no estado do jogo.
+  return Math.max(spawnDelay, spawnDelayMin); // Garante que o atraso de spawn não seja inferior a um valor mínimo.
 };
-const doubleStrongEnableScore = 2000;
+const doubleStrongEnableScore = 2000; // Define um limite de pontuação para habilitar uma função do jogo.
 
 const slowmoThreshold = 10;
 const strongThreshold = 25;
 const spinnerThreshold = 25;
 
-let pointerIsDown = false;
+let pointerIsDown = false; // Acompanha se o ponteiro do mouse/touch está atualmente pressionado.
 
-let pointerScreen = { x: 0, y: 0 };
+let pointerScreen = { x: 0, y: 0 }; // Armazena as coordenadas de tela do ponteiro.
 
-let pointerScene = { x: 0, y: 0 };
+let pointerScene = { x: 0, y: 0 }; // Armazena as coordenadas da cena do jogo do ponteiro.
 
-const minPointerSpeed = 60;
+const minPointerSpeed = 60; // Define uma velocidade mínima do ponteiro para interações.
 
-const hitDampening = 0.1;
+const hitDampening = 0.1; // Um valor que afeta o amortecimento de interações de "hit".
 
-const backboardZ = -400;
-const shadowColor = "#262e36";
+const backboardZ = -400; // Define a coordenada Z da placa traseira.
 
-const airDrag = 0.022;
-const gravity = 0.3;
+const shadowColor = "#262e36"; // Cor usada para sombras no jogo.
 
+const airDrag = 0.022; // Define o coeficiente de arrasto do ar.
+
+const gravity = 0.3; // Define a força da gravidade no jogo.
+
+// Várias constantes relacionadas a efeitos visuais no jogo.
 const sparkColor = "rgba(170,221,255,.9)";
 const sparkThickness = 2.2;
 const airDragSpark = 0.1;
-
 const touchTrailColor = "rgba(170,221,255,.62)";
 const touchTrailThickness = 7;
 const touchPointLife = 120;
 const touchPoints = [];
 
-const targetRadius = 40;
-const targetHitRadius = 50;
+const targetRadius = 40; // Define o raio de um alvo no jogo.
+const targetHitRadius = 50; // Define o raio de acerto de um alvo.
 const makeTargetGlueColor = (target) => {
   return "rgb(170,221,255)";
-};
+}; // Gera uma cor para "colar" alvos.
 
-const fragRadius = targetRadius / 3;
+const fragRadius = targetRadius / 3; // Define o raio de fragmentos quando um alvo é atingido.
 
-const canvas = document.querySelector("#c");
+const canvas = document.querySelector("#c"); // Seleciona um elemento HTML canvas para renderização.
 
-const cameraDistance = 900;
+const cameraDistance = 900; // Define a distância da câmera para a cena do jogo.
 
-const sceneScale = 1;
+const sceneScale = 1; // Define a escala da cena do jogo.
 
-const cameraFadeStartZ = 0.45 * cameraDistance;
-const cameraFadeEndZ = 0.65 * cameraDistance;
-const cameraFadeRange = cameraFadeEndZ - cameraFadeStartZ;
+const cameraFadeStartZ = 0.45 * cameraDistance; // Define o início do desvanecimento da câmera.
+const cameraFadeEndZ = 0.65 * cameraDistance; // Define o fim do desvanecimento da câmera.
+const cameraFadeRange = cameraFadeEndZ - cameraFadeStartZ; // Define a faixa de desvanecimento da câmera.
 
+// Arrays para armazenar elementos e polígonos do jogo.
 const allVertices = [];
 const allPolys = [];
 const allShadowVertices = [];
 const allShadowPolys = [];
 
+// Símbolos para modos de jogo e menus.
 const GAME_MODE_RANKED = Symbol("GAME_MODE_RANKED");
 const GAME_MODE_CASUAL = Symbol("GAME_MODE_CASUAL");
-
 const MENU_MAIN = Symbol("MENU_MAIN");
 const MENU_PAUSE = Symbol("MENU_PAUSE");
 const MENU_SCORE = Symbol("MENU_SCORE");
 
+// Objeto de estado contendo informações sobre o jogo e menus.
 const state = {
   game: {
     mode: GAME_MODE_RANKED,
-
     time: 0,
-
     score: 0,
-
     cubeCount: 0,
   },
   menus: {
@@ -88,29 +91,33 @@ const state = {
   },
 };
 
+// Funções para verificar o estado do jogo e o modo.
 const isInGame = () => !state.menus.active;
 const isMenuVisible = () => !!state.menus.active;
 const isCasualGame = () => state.game.mode === GAME_MODE_CASUAL;
 const isPaused = () => state.menus.active === MENU_PAUSE;
 
+// Funções para obter e definir a pontuação mais alta no armazenamento local.
 const highScoreKey = "__menja__highScore";
 const getHighScore = () => {
   const raw = localStorage.getItem(highScoreKey);
   return raw ? parseInt(raw, 10) : 0;
 };
-
 let _lastHighscore = getHighScore();
 const setHighScore = (score) => {
   _lastHighscore = getHighScore();
   localStorage.setItem(highScoreKey, String(score));
 };
 
+// Função para verificar se a pontuação atual é uma nova pontuação mais alta.
 const isNewHighScore = () => state.game.score > _lastHighscore;
 
+// Função auxiliar para verificar condições e lançar erros se as condições não forem atendidas.
 const invariant = (condition, message) => {
   if (!condition) throw new Error(message);
 };
 
+// Função auxiliar para selecionar elementos DOM e adicionar manipuladores de eventos de clique.
 const $ = (selector) => document.querySelector(selector);
 const handleClick = (element, handler) =>
   element.addEventListener("click", handler);
@@ -119,22 +126,22 @@ const handlePointerDown = (element, handler) => {
   element.addEventListener("mousedown", handler);
 };
 
+// Função auxiliar para formatar números com vírgulas como separadores de milhares.
 const formatNumber = (num) => num.toLocaleString();
 
+// Constantes para valores matemáticos.
 const PI = Math.PI;
 const TAU = Math.PI * 2;
 const ETA = Math.PI * 0.5;
 
+// Funções auxiliares para operações matemáticas comuns.
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
-
 const lerp = (a, b, mix) => (b - a) * mix + a;
-
 const random = (min, max) => Math.random() * (max - min) + min;
-
 const randomInt = (min, max) => ((Math.random() * (max - min + 1)) | 0) + min;
-
 const pickOne = (arr) => arr[(Math.random() * arr.length) | 0];
 
+// Funções para converter objetos de cor em strings hexadecimais e sombrear cores.
 const colorToHex = (color) => {
   return (
     "#" +
@@ -143,7 +150,6 @@ const colorToHex = (color) => {
     (color.b | 0).toString(16).padStart(2, "0")
   );
 };
-
 const shadeColor = (color, lightness) => {
   let other, mix;
   if (lightness < 0.5) {
@@ -161,14 +167,19 @@ const shadeColor = (color, lightness) => {
   );
 };
 
+// 2 parte
+
+// Array para armazenar todos os cooldowns
 const _allCooldowns = [];
 
+// Função para criar um cooldown
 const makeCooldown = (rechargeTime, units = 1) => {
   let timeRemaining = 0;
   let lastTime = 0;
 
   const initialOptions = { rechargeTime, units };
 
+  // Função para atualizar o tempo
   const updateTime = () => {
     const now = state.game.time;
 
@@ -181,11 +192,13 @@ const makeCooldown = (rechargeTime, units = 1) => {
     lastTime = now;
   };
 
+  // Função para verificar se pode usar
   const canUse = () => {
     updateTime();
     return timeRemaining <= rechargeTime * (units - 1);
   };
 
+  // Objeto cooldown
   const cooldown = {
     canUse,
     useIfAble() {
@@ -208,14 +221,17 @@ const makeCooldown = (rechargeTime, units = 1) => {
     },
   };
 
+  // Adiciona o cooldown ao array de todos os cooldowns
   _allCooldowns.push(cooldown);
 
   return cooldown;
 };
 
+// Função para resetar todos os cooldowns
 const resetAllCooldowns = () =>
   _allCooldowns.forEach((cooldown) => cooldown.reset());
 
+// Função para criar um spawner
 const makeSpawner = ({ chance, cooldownPerSpawn, maxSpawns }) => {
   const cooldown = makeCooldown(cooldownPerSpawn, maxSpawns);
   return {
@@ -232,6 +248,7 @@ const makeSpawner = ({ chance, cooldownPerSpawn, maxSpawns }) => {
   };
 };
 
+// Função para normalizar um vetor
 const normalize = (v) => {
   const mag = Math.hypot(v.x, v.y, v.z);
   return {
@@ -241,18 +258,22 @@ const normalize = (v) => {
   };
 };
 
+// Função para adicionar um número a outro
 const add = (a) => (b) => a + b;
 
+// Função para escalar um vetor
 const scaleVector = (scale) => (vector) => {
   vector.x *= scale;
   vector.y *= scale;
   vector.z *= scale;
 };
 
+// Função para clonar vértices
 function cloneVertices(vertices) {
   return vertices.map((v) => ({ x: v.x, y: v.y, z: v.z }));
 }
 
+// Função para copiar vértices para outro array
 function copyVerticesTo(arr1, arr2) {
   const len = arr1.length;
   for (let i = 0; i < len; i++) {
@@ -264,6 +285,7 @@ function copyVerticesTo(arr1, arr2) {
   }
 }
 
+// Função para calcular o ponto médio de um triângulo
 function computeTriMiddle(poly) {
   const v = poly.vertices;
   poly.middle.x = (v[0].x + v[1].x + v[2].x) / 3;
@@ -271,6 +293,7 @@ function computeTriMiddle(poly) {
   poly.middle.z = (v[0].z + v[1].z + v[2].z) / 3;
 }
 
+// Função para calcular o ponto médio de um quadrilátero
 function computeQuadMiddle(poly) {
   const v = poly.vertices;
   poly.middle.x = (v[0].x + v[1].x + v[2].x + v[3].x) / 4;
@@ -278,6 +301,7 @@ function computeQuadMiddle(poly) {
   poly.middle.z = (v[0].z + v[1].z + v[2].z + v[3].z) / 4;
 }
 
+// Função para calcular o ponto médio de um polígono
 function computePolyMiddle(poly) {
   if (poly.vertices.length === 3) {
     computeTriMiddle(poly);
@@ -286,6 +310,7 @@ function computePolyMiddle(poly) {
   }
 }
 
+// Função para calcular a profundidade de um polígono
 function computePolyDepth(poly) {
   computePolyMiddle(poly);
   const dX = poly.middle.x;
@@ -294,11 +319,15 @@ function computePolyDepth(poly) {
   poly.depth = Math.hypot(dX, dY, dZ);
 }
 
+// 3 parte
+
+// Função para calcular a normal de um polígono
 function computePolyNormal(poly, normalName) {
   const v1 = poly.vertices[0];
   const v2 = poly.vertices[1];
   const v3 = poly.vertices[2];
 
+  // Cálculo do vetor normal usando o produto vetorial
   const ax = v1.x - v2.x;
   const ay = v1.y - v2.y;
   const az = v1.z - v2.z;
@@ -310,6 +339,7 @@ function computePolyNormal(poly, normalName) {
   const ny = az * bx - ax * bz;
   const nz = ax * by - ay * bx;
 
+  // Normalização do vetor normal
   const mag = Math.hypot(nx, ny, nz);
   const polyNormal = poly[normalName];
   polyNormal.x = nx / mag;
@@ -317,6 +347,7 @@ function computePolyNormal(poly, normalName) {
   polyNormal.z = nz / mag;
 }
 
+// Função para transformar vértices
 function transformVertices(
   vertices,
   target,
@@ -330,6 +361,7 @@ function transformVertices(
   sY,
   sZ
 ) {
+  // Cálculo dos senos e cossenos para as rotações
   const sinX = Math.sin(rX);
   const cosX = Math.cos(rX);
   const sinY = Math.sin(rY);
@@ -337,27 +369,33 @@ function transformVertices(
   const sinZ = Math.sin(rZ);
   const cosZ = Math.cos(rZ);
 
+  // Transformação dos vértices
   vertices.forEach((v, i) => {
     const targetVertex = target[i];
 
+    // Rotação em torno do eixo X
     const x1 = v.x;
     const y1 = v.z * sinX + v.y * cosX;
     const z1 = v.z * cosX - v.y * sinX;
 
+    // Rotação em torno do eixo Y
     const x2 = x1 * cosY - z1 * sinY;
     const y2 = y1;
     const z2 = x1 * sinY + z1 * cosY;
 
+    // Rotação em torno do eixo Z
     const x3 = x2 * cosZ - y2 * sinZ;
     const y3 = x2 * sinZ + y2 * cosZ;
     const z3 = z2;
 
+    // Aplicação da translação e escala
     targetVertex.x = x3 * sX + tX;
     targetVertex.y = y3 * sY + tY;
     targetVertex.z = z3 * sZ + tZ;
   });
 }
 
+// Função para projetar um vértice
 const projectVertex = (v) => {
   const focalLength = cameraDistance * sceneScale;
   const depth = focalLength / (cameraDistance - v.z);
@@ -365,6 +403,7 @@ const projectVertex = (v) => {
   v.y = v.y * depth;
 };
 
+// Função para projetar um vértice em um alvo
 const projectVertexTo = (v, target) => {
   const focalLength = cameraDistance * sceneScale;
   const depth = focalLength / (cameraDistance - v.z);
@@ -372,10 +411,12 @@ const projectVertexTo = (v, target) => {
   target.y = v.y * depth;
 };
 
+// Funções vazias para medição de desempenho
 const PERF_START = () => {};
 const PERF_END = () => {};
 const PERF_UPDATE = () => {};
 
+// Função para criar um modelo de cubo
 function makeCubeModel({ scale = 1 }) {
   return {
     vertices: [
@@ -405,11 +446,13 @@ function makeCubeModel({ scale = 1 }) {
   };
 }
 
+// Função para criar um modelo de cubo recursivo
 function makeRecursiveCubeModel({ recursionLevel, splitFn, color, scale = 1 }) {
   const getScaleAtLevel = (level) => 1 / 3 ** level;
 
   let cubeOrigins = [{ x: 0, y: 0, z: 0 }];
 
+  // Criação dos cubos em cada nível de recursão
   for (let i = 1; i <= recursionLevel; i++) {
     const scale = getScaleAtLevel(i) * 2;
     const cubeOrigins2 = [];
@@ -453,7 +496,11 @@ function makeRecursiveCubeModel({ recursionLevel, splitFn, color, scale = 1 }) {
   return finalModel;
 }
 
+// 4 parte
+
+// Função para dividir uma esponja de Menger
 function mengerSpongeSplit(o, s) {
+  // Retorna um array de objetos representando as coordenadas dos novos cubos
   return [
     { x: o.x + s, y: o.y - s, z: o.z + s },
     { x: o.x + s, y: o.y - s, z: o.z + 0 },
@@ -480,14 +527,17 @@ function mengerSpongeSplit(o, s) {
   ];
 }
 
+// Função para otimizar um modelo
 function optimizeModel(model, threshold = 0.0001) {
   const { vertices, polys } = model;
 
+  // Função para comparar vértices
   const compareVertices = (v1, v2) =>
     Math.abs(v1.x - v2.x) < threshold &&
     Math.abs(v1.y - v2.y) < threshold &&
     Math.abs(v1.z - v2.z) < threshold;
 
+  // Função para comparar polígonos
   const comparePolys = (p1, p2) => {
     const v1 = p1.vIndexes;
     const v2 = p2.vIndexes;
@@ -508,10 +558,12 @@ function optimizeModel(model, threshold = 0.0001) {
     );
   };
 
+  // Adiciona um array de índices originais a cada vértice
   vertices.forEach((v, i) => {
     v.originalIndexes = [i];
   });
 
+  // Remove vértices duplicados
   for (let i = vertices.length - 1; i >= 0; i--) {
     for (let ii = i - 1; ii >= 0; ii--) {
       const v1 = vertices[i];
@@ -524,6 +576,7 @@ function optimizeModel(model, threshold = 0.0001) {
     }
   }
 
+  // Atualiza os índices dos vértices nos polígonos
   vertices.forEach((v, i) => {
     polys.forEach((p) => {
       p.vIndexes.forEach((vi, ii, arr) => {
@@ -535,12 +588,14 @@ function optimizeModel(model, threshold = 0.0001) {
     });
   });
 
+  // Adiciona uma soma dos índices dos vértices a cada polígono e ordena os polígonos por essa soma
   polys.forEach((p) => {
     const vi = p.vIndexes;
     p.sum = vi[0] + vi[1] + vi[2] + vi[3];
   });
   polys.sort((a, b) => b.sum - a.sum);
 
+  // Remove polígonos duplicados
   for (let i = polys.length - 1; i >= 0; i--) {
     for (let ii = i - 1; ii >= 0; ii--) {
       const p1 = polys[i];
@@ -558,13 +613,19 @@ function optimizeModel(model, threshold = 0.0001) {
   return model;
 }
 
+
+// 5 parte
+
+// Classe para representar uma entidade
 class Entity {
   constructor({ model, color, wireframe = false }) {
+    // Clonando os vértices do modelo
     const vertices = cloneVertices(model.vertices);
     const shadowVertices = cloneVertices(model.vertices);
     const colorHex = colorToHex(color);
     const darkColorHex = shadeColor(color, 0.4);
 
+    // Criando polígonos
     const polys = model.polys.map((p) => ({
       vertices: p.vIndexes.map((vIndex) => vertices[vIndex]),
       color: color,
@@ -578,12 +639,14 @@ class Entity {
       normalCamera: { x: 0, y: 0, z: 0 },
     }));
 
+    // Criando polígonos de sombra
     const shadowPolys = model.polys.map((p) => ({
       vertices: p.vIndexes.map((vIndex) => shadowVertices[vIndex]),
       wireframe: wireframe,
       normalWorld: { x: 0, y: 0, z: 0 },
     }));
 
+    // Inicializando propriedades da entidade
     this.projected = {};
     this.model = model;
     this.vertices = vertices;
@@ -593,6 +656,7 @@ class Entity {
     this.reset();
   }
 
+  // Método para resetar a entidade
   reset() {
     this.x = 0;
     this.y = 0;
@@ -616,6 +680,7 @@ class Entity {
     this.projected.y = 0;
   }
 
+  // Método para transformar a entidade
   transform() {
     transformVertices(
       this.model.vertices,
@@ -634,16 +699,20 @@ class Entity {
     copyVerticesTo(this.vertices, this.shadowVertices);
   }
 
+  // Método para projetar a entidade
   project() {
     projectVertexTo(this, this.projected);
   }
 }
 
+// Array para armazenar os alvos
 const targets = [];
 
+// Mapa para armazenar os alvos por cor
 const targetPool = new Map(allColors.map((c) => [c, []]));
 const targetWireframePool = new Map(allColors.map((c) => [c, []]));
 
+// Função para obter um alvo
 const getTarget = (() => {
   const slowmoSpawner = makeSpawner({
     chance: 0.5,
@@ -670,6 +739,7 @@ const getTarget = (() => {
     ["z", "x"],
   ];
 
+  // Função para obter um alvo de um estilo específico
   function getTargetOfStyle(color, wireframe) {
     const pool = wireframe ? targetWireframePool : targetPool;
     let target = pool.get(color).pop();
@@ -696,37 +766,48 @@ const getTarget = (() => {
     return target;
   }
 
-  return function getTarget() {
-    if (doubleStrong && state.game.score <= doubleStrongEnableScore) {
-      doubleStrong = false;
-    } else if (!doubleStrong && state.game.score > doubleStrongEnableScore) {
-      doubleStrong = true;
-      strongSpawner.mutate({ maxSpawns: 2 });
-    }
+// 5 parte
 
-    let color = pickOne([BLUE, GREEN, ORANGE]);
-    let wireframe = false;
-    let health = 1;
-    let maxHealth = 3;
-    const spinner =
-      state.game.cubeCount >= spinnerThreshold &&
-      isInGame() &&
-      spinnerSpawner.shouldSpawn();
+ // Função para obter um alvo com base no estado do jogo
+return function getTarget() {
+  // Verifica se a pontuação do jogo atingiu o limite para ativar ou desativar o "doubleStrong"
+  if (doubleStrong && state.game.score <= doubleStrongEnableScore) {
+    doubleStrong = false;
+  } else if (!doubleStrong && state.game.score > doubleStrongEnableScore) {
+    doubleStrong = true;
+    strongSpawner.mutate({ maxSpawns: 2 });
+  }
 
-    if (
-      state.game.cubeCount >= slowmoThreshold &&
-      slowmoSpawner.shouldSpawn()
-    ) {
-      color = BLUE;
-      wireframe = true;
-    } else if (
-      state.game.cubeCount >= strongThreshold &&
-      strongSpawner.shouldSpawn()
-    ) {
-      color = PINK;
-      health = 3;
-    }
+  // Define as propriedades iniciais do alvo
+  let color = pickOne([BLUE, GREEN, ORANGE]);
+  let wireframe = false;
+  let health = 1;
+  let maxHealth = 3;
 
+  // Verifica se o número de cubos atingiu o limite para ativar o "spinner"
+  const spinner =
+    state.game.cubeCount >= spinnerThreshold &&
+    isInGame() &&
+    spinnerSpawner.shouldSpawn();
+
+  // Verifica se o número de cubos atingiu o limite para ativar o "slowmo"
+  if (
+    state.game.cubeCount >= slowmoThreshold &&
+    slowmoSpawner.shouldSpawn()
+  ) {
+    color = BLUE;
+    wireframe = true;
+  } 
+  // Verifica se o número de cubos atingiu o limite para ativar o "strong"
+  else if (
+    state.game.cubeCount >= strongThreshold &&
+    strongSpawner.shouldSpawn()
+  ) {
+    color = PINK;
+    health = 3;
+  } 
+
+  // 6 parte
     const target = getTargetOfStyle(color, wireframe);
     target.hit = false;
     target.maxHealth = maxHealth;
@@ -844,6 +925,8 @@ const createBurst = (() => {
       1,
       1
     );
+
+// 7 parte
 
     for (let i = 0; i < fragCount; i++) {
       const position = positions[i];
@@ -1692,51 +1775,67 @@ function handleCanvasPointerUp() {
   }
 }
 
+// Função para lidar com o movimento do ponteiro no canvas
 function handleCanvasPointerMove(x, y) {
   if (pointerIsDown) {
+    // Atualiza a posição do ponteiro na tela
     pointerScreen.x = x;
     pointerScreen.y = y;
   }
 }
 
+// Verifica se os eventos PointerEvent são suportados pelo navegador
 if ("PointerEvent" in window) {
+  // Configura os ouvintes de eventos PointerEvent
   canvas.addEventListener("pointerdown", (event) => {
+    // Verifica se o evento é do botão primário do mouse e, em seguida, chama a função de tratamento
     event.isPrimary && handleCanvasPointerDown(event.clientX, event.clientY);
   });
 
   canvas.addEventListener("pointerup", (event) => {
+    // Verifica se o evento é do botão primário do mouse e, em seguida, chama a função de tratamento
     event.isPrimary && handleCanvasPointerUp();
   });
 
   canvas.addEventListener("pointermove", (event) => {
+    // Verifica se o evento é do botão primário do mouse e, em seguida, chama a função de tratamento
     event.isPrimary && handleCanvasPointerMove(event.clientX, event.clientY);
   });
 
+  // Ouve o evento quando o mouse sai do corpo do documento para tratar o evento de soltar o ponteiro
   document.body.addEventListener("mouseleave", handleCanvasPointerUp);
 } else {
   let activeTouchId = null;
+
+  // Configura os ouvintes de eventos de toque para dispositivos que não suportam PointerEvent
   canvas.addEventListener("touchstart", (event) => {
     if (!pointerIsDown) {
+      // Obtém o primeiro toque no evento e armazena seu identificador
       const touch = event.changedTouches[0];
       activeTouchId = touch.identifier;
+      // Chama a função de tratamento de pressionar o ponteiro
       handleCanvasPointerDown(touch.clientX, touch.clientY);
     }
   });
+
   canvas.addEventListener("touchend", (event) => {
     for (let touch of event.changedTouches) {
       if (touch.identifier === activeTouchId) {
+        // Encontra o toque ativo pelo identificador e chama a função de tratamento de soltar o ponteiro
         handleCanvasPointerUp();
         break;
       }
     }
   });
+
   canvas.addEventListener(
     "touchmove",
     (event) => {
       for (let touch of event.changedTouches) {
         if (touch.identifier === activeTouchId) {
+          // Encontra o toque ativo pelo identificador e chama a função de tratamento de movimento do ponteiro
           handleCanvasPointerMove(touch.clientX, touch.clientY);
-          event.preventDefault();
+          event.preventDefault(); // Previne o comportamento padrão de rolagem da tela
           break;
         }
       }
@@ -1745,4 +1844,6 @@ if ("PointerEvent" in window) {
   );
 }
 
+// Configura os canvas
 setupCanvases();
+
