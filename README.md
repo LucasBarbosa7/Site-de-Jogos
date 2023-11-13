@@ -14,7 +14,7 @@ Como Jogar: Use a barra de espaço ou o botão de toque para fazer o dinossauro 
 Jogo Fruit:
 
 
-Descrição: Quebre os cubos até atingir a maior pontuação.
+Descrição: Corte os cubos até atingir a maior pontuação.
 Como Jogar: Arrate o mouse, segurando com o botão direito para fazer o movimento de corte nos cubos adjacentes para quebra-los, assim que eles aparecerem. Se o cubo cair e o jogador não fazer esses movimentos, o jogor perderá a partida.
 
 Jogo Pong:
