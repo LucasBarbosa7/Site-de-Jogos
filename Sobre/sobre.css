@@ -8,6 +8,8 @@ body {
     background-image: url(../img/fundo.webp);
     background-position: center;
     background-size: cover;
+    font-family: Arial, sans-serif;
+
 }
 
 header {
@@ -15,6 +17,7 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
 
 .menu {
