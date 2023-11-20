@@ -7,38 +7,38 @@ Nossos Jogos
 
 Jogo do Dino:
 
-Descrição: Corra com o dinossauro pela savana e pule sobre os cactos para evitar colisões.
-Como Jogar: Use a barra de espaço ou o botão de toque para fazer o dinossauro pular. Evite cair nos cactos e continue pulando para acumular pontos.
+- Descrição: Corra com o dinossauro pela savana e pule sobre os cactos para evitar colisões.
+- Como Jogar: Use a barra de espaço ou o botão de toque para fazer o dinossauro pular. Evite cair nos cactos e continue pulando para acumular pontos.
 
 
 Jogo Cubo Ninja:
 
-Descrição: Corte os cubos até atingir a maior pontuação.
-Como Jogar: Arrate o mouse, segurando com o botão direito para fazer o movimento de corte nos cubos adjacentes para corta-los, assim que eles aparecerem. Se o cubo cair e o jogador não fazer esses movimentos, o jogor perderá a partida. Isso no mode de jogo CLÁSSICO (PLAY), no mode CASUAL o jogador não precisa se preucupar em cortar todos os cubos, apenar jogar e se divertir. 
+- Descrição: Corte os cubos até atingir a maior pontuação.
+- Como Jogar: Arrate o mouse, segurando com o botão direito para fazer o movimento de corte nos cubos adjacentes para corta-los, assim que eles aparecerem. Se o cubo cair e o jogador não fazer esses movimentos, o jogor perderá a partida. Isso no mode de jogo CLÁSSICO (PLAY), no mode CASUAL o jogador não precisa se preucupar em cortar todos os cubos, apenar jogar e se divertir. 
 
 
 Jogo Pong:
 
-Descrição: Jogue o clássico jogo de raquetes contra um oponente ou a "IA".
-Como Jogar: Use as setas ou toque na tela para mover a raquete para cima e para baixo. Tente rebater a bola para o lado oposto e evitar que ela passe pela sua raquete. Ganhe pontos ao fazer a bola passar pelo oponente.
+- Descrição: Jogue o clássico jogo de raquetes contra um oponente ou a "IA".
+- Como Jogar: Use as setas ou toque na tela para mover a raquete para cima e para baixo. Tente rebater a bola para o lado oposto e evitar que ela passe pela sua raquete. Ganhe pontos ao fazer a bola passar pelo oponente.
 
 
 Jogo Snake:
 
-Descrição: Controle uma cobra que cresce ao comer alimentos, evitando colisões consigo mesma.
-Como Jogar: Use as setas ou toque na direção desejada para mover a cobra. Colete os alimentos para crescer, mas evite colidir com as paredes ou com seu próprio corpo. O jogo fica mais desafiador à medida que a cobra cresce.
+- Descrição: Controle uma cobra que cresce ao comer alimentos, evitando colisões consigo mesma.
+- Como Jogar: Use as setas ou toque na direção desejada para mover a cobra. Colete os alimentos para crescer, mas evite colidir com as paredes ou com seu próprio corpo. O jogo fica mais desafiador à medida que a cobra cresce.
 
 
 Jogo da Velha:
 
-Descrição: Jogue o clássico jogo da velha contra um amigo ou desafie a IA.
-Como Jogar: Clique ou toque em um espaço vazio no tabuleiro para marcar com "X" ou "O". O objetivo é formar uma linha horizontal, vertical ou diagonal com três de suas marcações antes do seu oponente.
+- Descrição: Jogue o clássico jogo da velha contra um amigo ou desafie a IA.
+- Como Jogar: Clique ou toque em um espaço vazio no tabuleiro para marcar com "X" ou "O". O objetivo é formar uma linha horizontal, vertical ou diagonal com três de suas marcações antes do seu oponente.
 
 
 Pedra, Papel, Tesoura:
 
-Descrição: Jogue o clássico jogo de decisão contra o computador.
-Como Jogar: Escolha entre "Pedra," "Papel" ou "Tesoura." O computador fará uma escolha também. As regras são: Pedra vence Tesoura, Tesoura vence Papel e Papel vence Pedra.
+- Descrição: Jogue o clássico jogo de decisão contra o computador.
+- Como Jogar: Escolha entre "Pedra," "Papel" ou "Tesoura." O computador fará uma escolha também. As regras são: Pedra vence Tesoura, Tesoura vence Papel e Papel vence Pedra.
 
 
 Testes e Aprimoramento: Após a implementação inicial, realizamos extensos testes para identificar e corrigir bugs. Também coletamos feedback dos jogadores para aprimorar a experiência.
