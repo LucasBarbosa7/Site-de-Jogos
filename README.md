@@ -14,24 +14,23 @@ Jogo do Dino:
 Jogo Cubo Ninja:
 
 - Descrição: Corte os cubos até atingir a maior pontuação.
-- Como Jogar: Arrate o mouse, segurando com o botão direito para fazer o movimento de corte nos cubos adjacentes para corta-los, assim que eles aparecerem. Se o cubo cair e o jogador não fazer esses movimentos, o jogor perderá a partida. Isso no modo de jogo CLÁSSICO (PLAY), no mode CASUAL o jogador não precisa se preucupar em cortar todos os cubos, apenar jogar e se divertir. 
+- Como Jogar: Arrate o mouse, segurando com o botão direito para fazer o movimento de corte nos cubos adjacentes para corta-los, assim que eles aparecerem. Se o cubo cair e o jogador não fazer esses movimentos, o jogador perderá a partida. Isso no modo de jogo CLÁSSICO (PLAY), no mode CASUAL o jogador não precisa se preucupar em cortar todos os cubos, apenar jogar e se divertir. 
 
 
 Jogo Pong:
 
-- Descrição: Jogue o clássico jogo de raquetes contra um oponente ou a "IA".
+- Descrição: Jogue o clássico jogo de raquetes contra uma "IA".
 - Como Jogar: Use as setas ou toque na tela para mover a raquete para cima e para baixo. Tente rebater a bola para o lado oposto e evitar que ela passe pela sua raquete. Ganhe pontos ao fazer a bola passar pelo oponente.
 
 
 Jogo Snake:
 
-- Descrição: Controle uma cobra que cresce ao comer alimentos, evitando colisões consigo mesma.
-- Como Jogar: Use as setas ou toque na direção desejada para mover a cobra. Colete os alimentos para crescer, mas evite colidir com as paredes ou com seu próprio corpo. O jogo fica mais desafiador à medida que a cobra cresce.
-
+- Descrição: Controle uma cobra que cresce ao comer alimentos, evitando colisões consigo mesma ou com as paredes.
+- Como Jogar: Use as setas ou toque na direção desejada para mover a cobra. Colete os alimentos para crescer, mas evite colidir com as paredes ou com seu próprio corpo. 
 
 Jogo da Velha:
 
-- Descrição: Jogue o clássico jogo da velha contra um amigo ou desafie a IA.
+- Descrição: Jogue o clássico jogo da velha contra um amigo.
 - Como Jogar: Clique ou toque em um espaço vazio no tabuleiro para marcar com "X" ou "O". O objetivo é formar uma linha horizontal, vertical ou diagonal com três de suas marcações antes do seu oponente.
 
 
