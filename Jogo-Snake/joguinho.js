@@ -1,218 +1,166 @@
-// Seleciona o elemento de canvas e obtém o contexto 2D
-const canvas = document.querySelector("canvas")
-const ctx = canvas.getContext("2d")
+document.addEventListener("DOMContentLoaded", () => {
+  // Obter referência para o elemento canvas e seu contexto 2D
+  const canvas = document.getElementById("game-canvas");
+  const ctx = canvas.getContext("2d");
 
-// Seleciona elementos de interface do usuário
-const score = document.querySelector(".score--value")
-const finalScore = document.querySelector(".final-score > span")
-const menu = document.querySelector(".menu-screen")
-const buttonPlay = document.querySelector(".btn-play")
+  // Obter referências para o botão de reinício e o elemento de pontuação
+  const restartButton = document.getElementById("restart-button");
+  const scoreElement = document.getElementById("score");
 
-// Cria um objeto de áudio para efeitos sonoros
-const audio = new Audio("../assets/audio.mp3")
+  // Tamanho da grade para o jogo
+  const gridSize = 20;
 
-// Define o tamanho de cada célula no jogo
-const size = 30
+  // Inicializar a cobra com uma posição inicial
+  let snake = [{ x: 5, y: 5 }];
 
-// Define a posição inicial da cobra
-const initialPosition = { x: 270, y: 240 }
-let snake = [initialPosition]
+  // Inicializar a posição inicial da comida
+  let food = { x: 10, y: 10 };
 
-// Função para incrementar a pontuação
-const incrementScore = () => {
-    score.innerText = +score.innerText + 10
-}
+  // Direção inicial da cobra
+  let direction = "right";
 
-// Gera um número aleatório entre min e max
-const randomNumber = (min, max) => {
-    return Math.round(Math.random() * (max - min) + min)
-}
+  // Variável para verificar se o jogo acabou
+  let isGameOver = false;
 
-// Gera uma posição aleatória para o alimento
-const randomPosition = () => {
-    const number = randomNumber(0, canvas.width - size)
-    return Math.round(number / 30) * 30
-}
+  // Variável para armazenar a pontuação
+  let score = 0;
 
-// Gera uma cor aleatória para o alimento
-const randomColor = () => {
-    const red = randomNumber(0, 255)
-    const green = randomNumber(0, 255)
-    const blue = randomNumber(0, 255)
+  function draw() {
+    // Limpar o canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    return `rgb(${red}, ${green}, ${blue})`
-}
-
-// Objeto que representa o alimento
-const food = {
-    x: randomPosition(),
-    y: randomPosition(),
-    color: randomColor()
-}
-
-let direction, loopId
-
-// Função para desenhar o alimento na tela
-const drawFood = () => {
-    const { x, y, color } = food
-
-    ctx.shadowColor = color
-    ctx.shadowBlur = 6
-    ctx.fillStyle = color
-    ctx.fillRect(x, y, size, size)
-    ctx.shadowBlur = 0
-}
-
-// Função para desenhar a cobra na tela
-const drawSnake = () => {
-    ctx.fillStyle = "#ddd"
-
-    snake.forEach((position, index) => {
-        if (index == snake.length - 1) {
-            ctx.fillStyle = "white"
-        }
-
-        ctx.fillRect(position.x, position.y, size, size)
-    })
-}
-
-// Função para mover a cobra
-const moveSnake = () => {
-    if (!direction) return
-
-    const head = snake[snake.length - 1]
-
-    if (direction == "right") {
-        snake.push({ x: head.x + size, y: head.y })
+    // Desenhar a cobra
+    ctx.fillStyle = "green";
+    for (let i = 0; i < snake.length; i++) {
+      ctx.fillRect(
+        snake[i].x * gridSize,
+        snake[i].y * gridSize,
+        gridSize,
+        gridSize
+      );
     }
 
-    if (direction == "left") {
-        snake.push({ x: head.x - size, y: head.y })
+    // Desenhar a comida
+    ctx.fillStyle = "red";
+    ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+  }
+
+  function update() {
+    if (isGameOver) {
+      return;
     }
 
-    if (direction == "down") {
-        snake.push({ x: head.x, y: head.y + size })
+    // Atualizar a posição da cobra com base na direção
+    const head = { ...snake[0] };
+    switch (direction) {
+      case "up":
+        head.y -= 1;
+        break;
+      case "down":
+        head.y += 1;
+        break;
+      case "left":
+        head.x -= 1;
+        break;
+      case "right":
+        head.x += 1;
+        break;
     }
 
-    if (direction == "up") {
-        snake.push({ x: head.x, y: head.y - size })
+    // Verificar colisão com a parede
+    if (
+      head.x < 0 ||
+      head.x >= canvas.width / gridSize ||
+      head.y < 0 ||
+      head.y >= canvas.height / gridSize
+    ) {
+      gameOver();
+      return;
     }
 
-    snake.shift()
-}
-
-// Função para desenhar a grade na tela
-const drawGrid = () => {
-    ctx.lineWidth = 1
-    ctx.strokeStyle = "#191919"
-
-    for (let i = 30; i < canvas.width; i += 30) {
-        ctx.beginPath()
-        ctx.lineTo(i, 0)
-        ctx.lineTo(i, 600)
-        ctx.stroke()
-
-        ctx.beginPath()
-        ctx.lineTo(0, i)
-        ctx.lineTo(600, i)
-        ctx.stroke()
-    }
-}
-
-// Função para verificar se a cobra comeu o alimento
-const chackEat = () => {
-    const head = snake[snake.length - 1]
-
-    if (head.x == food.x && head.y == food.y) {
-        incrementScore()
-        snake.push(head)
-        audio.play()
-
-        let x = randomPosition()
-        let y = randomPosition()
-
-        while (snake.find((position) => position.x == x && position.y == y)) {
-            x = randomPosition()
-            y = randomPosition()
-        }
-
-        food.x = x
-        food.y = y
-        food.color = randomColor()
-    }
-}
-
-// Função para verificar colisões (com parede ou consigo mesma)
-const checkCollision = () => {
-    const head = snake[snake.length - 1]
-    const canvasLimit = canvas.width - size
-    const neckIndex = snake.length - 2
-
-    const wallCollision =
-        head.x < 0 || head.x > canvasLimit || head.y < 0 || head.y > canvasLimit
-
-    const selfCollision = snake.find((position, index) => {
-        return index < neckIndex && position.x == head.x && position.y == head.y
-    })
-
-    if (wallCollision || selfCollision) {
-        gameOver()
-    }
-}
-
-// Função chamada quando o jogo termina
-const gameOver = () => {
-    direction = undefined
-
-    menu.style.display = "flex"
-    finalScore.innerText = score.innerText
-    canvas.style.filter = "blur(2px)"
-}
-
-// Função principal que cria um loop de jogo
-const gameLoop = () => {
-    clearInterval(loopId)
-
-    ctx.clearRect(0, 0, 600, 600)
-    drawGrid()
-    drawFood()
-    moveSnake()
-    drawSnake()
-    chackEat()
-    checkCollision()
-
-    loopId = setTimeout(() => {
-        gameLoop()
-    }, 150)
-}
-
-// Inicializa o loop do jogo
-gameLoop()
-
-// Evento para capturar as teclas pressionadas
-document.addEventListener("keydown", ({ key }) => {
-    if (key == "ArrowRight" && direction != "left") {
-        direction = "right"
+    // Verificar colisão com a própria cobra
+    for (let i = 1; i < snake.length; i++) {
+      if (head.x === snake[i].x && head.y === snake[i].y) {
+        gameOver();
+        return;
+      }
     }
 
-    if (key == "ArrowLeft" && direction != "right") {
-        direction = "left"
+    // Verificar se a cobra comeu a comida
+    if (head.x === food.x && head.y === food.y) {
+      score++;
+      scoreElement.textContent = score;
+      snake.unshift(food);
+      generateFood();
+    } else {
+      // Remover o último segmento da cobra e adicionar a cabeça
+      snake.pop();
+      snake.unshift(head);
     }
 
-    if (key == "ArrowDown" && direction != "up") {
-        direction = "down"
+    // Desenhar o estado atual do jogo
+    draw();
+  }
+
+  // Função para gerar uma nova posição para a comida
+  function generateFood() {
+    food = {
+      x: Math.floor(Math.random() * (canvas.width / gridSize)),
+      y: Math.floor(Math.random() * (canvas.height / gridSize)),
+    };
+  }
+
+  // Função chamada quando o jogo termina
+  function gameOver() {
+    isGameOver = true;
+    restartButton.style.display = "block"; // Exibe o botão de reinício
+  }
+
+  // Função para reiniciar o jogo
+  function restartGame() {
+    // Reinicializa a cobra com uma posição inicial
+    snake = [{ x: 5, y: 5 }];
+
+    // Define a direção inicial da cobra
+    direction = "right";
+
+    // Reseta a flag de fim de jogo
+    isGameOver = false;
+
+    // Zera a pontuação
+    score = 0;
+
+    // Atualiza o elemento de pontuação na tela
+    scoreElement.textContent = score;
+
+    // Esconde o botão de reinício
+    restartButton.style.display = "none";
+
+    // Gera uma nova posição para a comida
+    generateFood();
+  }
+
+  // Adicionar ouvintes de eventos
+  document.addEventListener("keydown", (event) => {
+    switch (event.key) {
+      case "ArrowUp":
+        direction = "up";
+        break;
+      case "ArrowDown":
+        direction = "down";
+        break;
+      case "ArrowLeft":
+        direction = "left";
+        break;
+      case "ArrowRight":
+        direction = "right";
+        break;
     }
+  });
 
-    if (key == "ArrowUp" && direction != "down") {
-        direction = "up"
-    }
-})
+  restartButton.addEventListener("click", restartGame);
 
-// Evento para reiniciar o jogo
-buttonPlay.addEventListener("click", () => {
-    score.innerText = "00"
-    menu.style.display = "none"
-    canvas.style.filter = "none"
-
-    snake = [initialPosition]
-})
+  // Iniciar o jogo
+  generateFood();
+  setInterval(update, 180); // Atualizar o jogo a cada 100 milissegundos
+});

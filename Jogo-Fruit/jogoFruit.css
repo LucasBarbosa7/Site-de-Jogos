@@ -20,12 +20,6 @@ body {
     transform: translateZ(0);
   }
   
-  
-  /*/////////////////////
-  //        HUD        //
-  /////////////////////*/
-  
-  
   .hud__score,
   .pause-btn {
     position: fixed;
@@ -106,12 +100,6 @@ body {
     transform-origin: 0 0;
   }
   
-  
-  
-  /*/////////////////////
-  //       MENUS       //
-  /////////////////////*/
-  
   .menus::before {
     content: '';
     pointer-events: none;
@@ -136,9 +124,7 @@ body {
     opacity: 0.02;
   }
   
-  
-  
-  /* Menu containers */
+
   .menu {
     pointer-events: none;
     position: fixed;
@@ -176,9 +162,6 @@ body {
   .menus:not(.interactive-mode) .menu.active > * {
     pointer-events: auto;
   }
-  
-  
-  /* Common menu elements */
   
   h1 {
     font-size: 4rem;
@@ -236,7 +219,7 @@ body {
     transition: opacity 0.3s, transform 0.3s;
   }
   
-  /* No `:focus` styles because this is a mouse/touch game! */
+ 
   button:active {
     opacity: 1;
   }
@@ -257,7 +240,7 @@ body {
     color: white;
   }
   
-  /* Only enable hover state on large screens */
+ 
   @media (min-width: 1025px) {
     button:hover {
       opacity: 1;

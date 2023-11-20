@@ -48,7 +48,7 @@ header {
 }
 
 .menu ul li a:hover {
-    color: #ff6600; /* Cor de destaque quando passa o mouse */
+    color: #ff6600; 
 }
 
 .container {

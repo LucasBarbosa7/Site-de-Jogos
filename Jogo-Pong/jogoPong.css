@@ -19,7 +19,7 @@ header {
 }
 
 .menu {
-    background-color: rgba(0, 0, 0, 0.6); /* Cor de fundo opaca */
+    background-color: rgba(0, 0, 0, 0.6); 
     padding: 10px 0;
     position: fixed;
     top: 0;
@@ -46,17 +46,12 @@ header {
 }
 
 .menu ul li a:hover {
-    color: #ff6600; /* Cor de destaque quando passa o mouse */
-}
-
-#game-container {
-    text-align: center;
-    position: relative;
+    color: #ff6600; 
 }
 
 canvas {
-    border: 2px solid white;
-    margin: 0 auto; /* Centraliza o canvas horizontalmente */
+    border: 3px solid white;
+    margin: auto; 
 }
 
 #score {

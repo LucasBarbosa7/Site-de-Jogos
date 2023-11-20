@@ -29,6 +29,7 @@ const paddleA = {
   speed: 0,
 };
 
+// Raquete controlada pela "IA"
 const paddleB = {
   x: canvas.width - 60,
   y: canvas.height / 2 - 70,
@@ -51,11 +52,27 @@ const updateGameArea = () => {
   if (paddleA.y < 0) paddleA.y = 0;
   if (paddleA.y + paddleA.height > canvas.height) paddleA.y = canvas.height - paddleA.height;
 
-  // Movimento da raquete controlada pela IA
-  if (ball.speedX > 0) {
-    if (paddleB.y + paddleB.height / 2 < ball.y) paddleB.y += paddleB.speed;
-    else paddleB.y -= paddleB.speed;
+  
+//----------------------------COMO QUE A "IA" FUNCIONA, COMO É FEITA ESSA SIMULAÇÃO------------
+// Movimento da raquete controlada pela IA
+if (ball.speedX > 0) {
+  // Verifica se a bola está se movendo para a direita (em direção à raquete controlada pela IA)
+
+  if (paddleB.y + paddleB.height / 2 < ball.y) {
+    // Verifica se a posição vertical (y) da raquete B (controlada pela IA) mais a metade de sua altura
+    // é menor que a posição vertical da bola. Isso significa que a bola está abaixo da posição central da raquete.
+
+    paddleB.y += paddleB.speed;
+    // Move a raquete para baixo incrementando sua posição vertical pela velocidade definida para a raquete B.
+  } else {
+    // Se a posição vertical da raquete B mais a metade de sua altura for maior que a posição vertical da bola,
+    // significa que a bola está acima da posição central da raquete.
+
+    paddleB.y -= paddleB.speed;
+    // Move a raquete para cima decrementando sua posição vertical pela velocidade definida para a raquete B.
   }
+}
+//--------------------------------------------------------------------------------------------------
 
   // Movimento da bola
   ball.x += ball.speedX;

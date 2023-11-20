@@ -59,7 +59,7 @@ const canvas = document.querySelector("#c"); // Seleciona um elemento HTML canva
 
 const cameraDistance = 900; // Define a distância da câmera para a cena do jogo.
 
-const sceneScale = 1; // Define a escala da cena do jogo.
+const sceneScale = 1.5; // Define a escala da cena do jogo.
 
 const cameraFadeStartZ = 0.45 * cameraDistance; // Define o início do desvanecimento da câmera.
 const cameraFadeEndZ = 0.65 * cameraDistance; // Define o fim do desvanecimento da câmera.
@@ -169,10 +169,10 @@ const shadeColor = (color, lightness) => {
 
 // 2 parte
 
-// Array para armazenar todos os cooldowns
+// Array para armazenar todos os cooldowns (tempo de espera)
 const _allCooldowns = [];
 
-// Função para criar um cooldown
+// Função para criar um cooldown (tempo de espera)
 const makeCooldown = (rechargeTime, units = 1) => {
   let timeRemaining = 0;
   let lastTime = 0;
@@ -198,7 +198,7 @@ const makeCooldown = (rechargeTime, units = 1) => {
     return timeRemaining <= rechargeTime * (units - 1);
   };
 
-  // Objeto cooldown
+  // Objeto cooldown (termpo de espera)
   const cooldown = {
     canUse,
     useIfAble() {
@@ -285,6 +285,7 @@ function copyVerticesTo(arr1, arr2) {
   }
 }
 
+// Essas funções estão relacionadas ao cálculo do ponto médio de polígonos no espaço tridimensional.
 // Função para calcular o ponto médio de um triângulo
 function computeTriMiddle(poly) {
   const v = poly.vertices;
@@ -498,7 +499,7 @@ function makeRecursiveCubeModel({ recursionLevel, splitFn, color, scale = 1 }) {
 
 // 4 parte
 
-// Função para dividir uma esponja de Menger
+// Função para dividir (cortar), os cubos
 function mengerSpongeSplit(o, s) {
   // Retorna um array de objetos representando as coordenadas dos novos cubos
   return [
@@ -612,7 +613,6 @@ function optimizeModel(model, threshold = 0.0001) {
 
   return model;
 }
-
 
 // 5 parte
 
@@ -766,88 +766,106 @@ const getTarget = (() => {
     return target;
   }
 
-// 5 parte
+  // 5 parte
 
- // Função para obter um alvo com base no estado do jogo
-return function getTarget() {
-  // Verifica se a pontuação do jogo atingiu o limite para ativar ou desativar o "doubleStrong"
-  if (doubleStrong && state.game.score <= doubleStrongEnableScore) {
-    doubleStrong = false;
-  } else if (!doubleStrong && state.game.score > doubleStrongEnableScore) {
-    doubleStrong = true;
-    strongSpawner.mutate({ maxSpawns: 2 });
-  }
+  // Função para obter um alvo com base no estado do jogo
+  return function getTarget() {
+    // Verifica se a pontuação do jogo atingiu o limite para ativar ou desativar o "doubleStrong"
+    if (doubleStrong && state.game.score <= doubleStrongEnableScore) {
+      doubleStrong = false;
+    } else if (!doubleStrong && state.game.score > doubleStrongEnableScore) {
+      doubleStrong = true;
+      strongSpawner.mutate({ maxSpawns: 2 });
+    }
 
-  // Define as propriedades iniciais do alvo
-  let color = pickOne([BLUE, GREEN, ORANGE]);
-  let wireframe = false;
-  let health = 1;
-  let maxHealth = 3;
+    // Define as propriedades iniciais do alvo
+    let color = pickOne([BLUE, GREEN, ORANGE]);
+    let wireframe = false;
+    let health = 1;
+    let maxHealth = 3;
 
-  // Verifica se o número de cubos atingiu o limite para ativar o "spinner"
-  const spinner =
-    state.game.cubeCount >= spinnerThreshold &&
-    isInGame() &&
-    spinnerSpawner.shouldSpawn();
+    // Verifica se o número de cubos atingiu o limite para ativar o "spinner"
+    const spinner =
+      state.game.cubeCount >= spinnerThreshold &&
+      isInGame() &&
+      spinnerSpawner.shouldSpawn();
 
-  // Verifica se o número de cubos atingiu o limite para ativar o "slowmo"
-  if (
-    state.game.cubeCount >= slowmoThreshold &&
-    slowmoSpawner.shouldSpawn()
-  ) {
-    color = BLUE;
-    wireframe = true;
-  } 
-  // Verifica se o número de cubos atingiu o limite para ativar o "strong"
-  else if (
-    state.game.cubeCount >= strongThreshold &&
-    strongSpawner.shouldSpawn()
-  ) {
-    color = PINK;
-    health = 3;
-  } 
+    // Verifica se o número de cubos atingiu o limite para ativar o "slowmo"
+    if (
+      state.game.cubeCount >= slowmoThreshold &&
+      slowmoSpawner.shouldSpawn()
+    ) {
+      color = BLUE;
+      wireframe = true;
+    }
+    // Verifica se o número de cubos atingiu o limite para ativar o "strong"
+    else if (
+      state.game.cubeCount >= strongThreshold &&
+      strongSpawner.shouldSpawn()
+    ) {
+      color = PINK;
+      health = 3;
+    }
 
-  // 6 parte
+    // Obtém o alvo (objeto) com base nas configurações de cor e contorno (wireframe)
     const target = getTargetOfStyle(color, wireframe);
-    target.hit = false;
-    target.maxHealth = maxHealth;
-    target.health = health;
+
+    // Inicializa as propriedades do alvo
+    target.hit = false; // Define a propriedade 'hit' como false, indicando que o alvo não foi atingido ainda.
+    target.maxHealth = maxHealth; // Define a quantidade máxima de saúde que o alvo pode ter.
+    target.health = health; // Define a quantidade atual de saúde do alvo.
+
+    // Atualiza a exibição da saúde do alvo (representação visual)
     updateTargetHealth(target, 0);
 
+    // Cria um array chamado 'spinSpeeds'
     const spinSpeeds = [Math.random() * 0.1 - 0.05, Math.random() * 0.1 - 0.05];
 
+    // Verifica se a variável 'spinner' é verdadeira
     if (spinner) {
+      // Define a velocidade de rotação no eixo x como -0.25
       spinSpeeds[0] = -0.25;
+
+      // Define a velocidade de rotação no eixo y como 0
       spinSpeeds[1] = 0;
+
       target.rotateZ = random(0, TAU);
     }
 
+    // Seleciona aleatoriamente um conjunto de eixos de rotação a partir das opções disponíveis
     const axes = pickOne(axisOptions);
 
+    // Para cada velocidade de rotação no array spinSpeeds e seu eixo correspondente,
+    // aplica a velocidade de rotação ao objeto 'target'
     spinSpeeds.forEach((spinSpeed, i) => {
+      // Utiliza um switch para determinar qual eixo de rotação é associado à velocidade
       switch (axes[i]) {
         case "x":
-          target.rotateXD = spinSpeed;
+          target.rotateXD = spinSpeed; // Aplica a velocidade de rotação ao eixo x
           break;
         case "y":
-          target.rotateYD = spinSpeed;
+          target.rotateYD = spinSpeed; // Aplica a velocidade de rotação ao eixo y
           break;
         case "z":
-          target.rotateZD = spinSpeed;
+          target.rotateZD = spinSpeed; // Aplica a velocidade de rotação ao eixo z
           break;
       }
     });
 
+    // Retorna o objeto 'target' após a aplicação das rotações
     return target;
   };
 })();
 
+// Atualiza a saúde do objeto 'target' e ajusta a aparência visual dos polígonos se não for um wireframe
 const updateTargetHealth = (target, healthDelta) => {
-  target.health += healthDelta;
+  target.health += healthDelta; // Atualiza a saúde do objeto somando o delta de saúde fornecido
 
+  // Verifica se o objeto não é um wireframe
   if (!target.wireframe) {
-    const strokeWidth = target.health - 1;
-    const strokeColor = makeTargetGlueColor(target);
+    const strokeWidth = target.health - 1; // Calcula a largura da borda com base na saúde
+    const strokeColor = makeTargetGlueColor(target); // Obtém a cor da borda usando uma função auxiliar
+    // Itera sobre os polígonos no objeto 'target' e atualiza a largura e cor da borda
     for (let p of target.polys) {
       p.strokeWidth = strokeWidth;
       p.strokeColor = strokeColor;
@@ -855,24 +873,31 @@ const updateTargetHealth = (target, healthDelta) => {
   }
 };
 
+// Função que retorna um fragmento (frag) ao pool correspondente e o reinicia
 const returnTarget = (target) => {
   target.reset();
   const pool = target.wireframe ? targetWireframePool : targetPool;
   pool.get(target.color).push(target);
 };
 
+// Função que reinicia todos os alvos (targets)
 function resetAllTargets() {
+  // Enquanto houver alvos na lista 'targets', chama a função 'returnTarget' para reiniciar e retornar cada um ao pool
   while (targets.length) {
     returnTarget(targets.pop());
   }
 }
 
+// Um array vazio chamado 'frags' para armazenar fragmentos
 const frags = [];
 
+// Mapas (pools) para armazenar fragmentos coloridos, separados em pools de wireframe e não wireframe
 const fragPool = new Map(allColors.map((c) => [c, []]));
 const fragWireframePool = new Map(allColors.map((c) => [c, []]));
 
+// Uma função anônima (IIFE) que cria e retorna uma função chamada 'createBurst'
 const createBurst = (() => {
+  // Inicialização de variáveis usadas na criação de fragmentos
   const basePositions = mengerSpongeSplit({ x: 0, y: 0, z: 0 }, fragRadius * 2);
   const positions = cloneVertices(basePositions);
   const prevPositions = cloneVertices(basePositions);
@@ -883,8 +908,10 @@ const createBurst = (() => {
 
   const fragCount = basePositions.length;
 
+  // Função interna que obtém um fragmento do pool correspondente ao 'target'
   function getFragForTarget(target) {
     const pool = target.wireframe ? fragWireframePool : fragPool;
+    // Obtém um fragmento do pool ou cria um novo se o pool estiver vazio
     let frag = pool.get(target.color).pop();
     if (!frag) {
       frag = new Entity({
@@ -898,7 +925,9 @@ const createBurst = (() => {
     return frag;
   }
 
+  // Retorna a função 'createBurst', que cria fragmentos com base em um 'target' e uma força opcional
   return (target, force = 1) => {
+    // Transforma as posições dos fragmentos com base nas propriedades do 'target'
     transformVertices(
       basePositions,
       positions,
@@ -912,6 +941,7 @@ const createBurst = (() => {
       1,
       1
     );
+    // Transforma as posições anteriores dos fragmentos com base nas propriedades do 'target' (antes da movimentação)
     transformVertices(
       basePositions,
       prevPositions,
@@ -926,18 +956,22 @@ const createBurst = (() => {
       1
     );
 
-// 7 parte
+    // 7 parte
 
+    // Itera sobre todos os fragmentos no array 'frags'
     for (let i = 0; i < fragCount; i++) {
+      // Obtém a posição atual, posição anterior e velocidade do fragmento atual
       const position = positions[i];
       const prevPosition = prevPositions[i];
       const velocity = velocities[i];
 
+      // Calcula as componentes da velocidade subtraindo as posições anteriores das atuais
       velocity.x = position.x - prevPosition.x;
       velocity.y = position.y - prevPosition.y;
       velocity.z = position.z - prevPosition.z;
     }
 
+    // Transforma os vetores de posição normalizados baseados na rotação do 'target'
     transformVertices(
       basePositionNormals,
       positionNormals,
@@ -952,13 +986,17 @@ const createBurst = (() => {
       1
     );
 
+    // Loop que itera sobre todos os fragmentos
     for (let i = 0; i < fragCount; i++) {
+      // Obtém a posição, velocidade e normal do fragmento atual
       const position = positions[i];
       const velocity = velocities[i];
       const normal = positionNormals[i];
 
+      // Obtém um fragmento do pool correspondente ao 'target' atual
       const frag = getFragForTarget(target);
 
+      // Define as propriedades do fragmento com base nas propriedades do 'target'
       frag.x = position.x;
       frag.y = position.y;
       frag.z = position.z;
@@ -966,6 +1004,7 @@ const createBurst = (() => {
       frag.rotateY = target.rotateY;
       frag.rotateZ = target.rotateZ;
 
+      // Define as velocidades do fragmento com base nas velocidades do 'target', força e aleatoriedade
       const burstSpeed = 2 * force;
       const randSpeed = 2 * force;
       const rotateScale = 0.015;
@@ -976,130 +1015,205 @@ const createBurst = (() => {
       frag.rotateYD = frag.yD * rotateScale;
       frag.rotateZD = frag.zD * rotateScale;
 
+      // Adiciona o fragmento ao array 'frags'
       frags.push(frag);
     }
   };
 })();
 
+// Função que reinicia um fragmento e o retorna ao pool correspondente
 const returnFrag = (frag) => {
+  // Reinicia o fragmento
   frag.reset();
+
+  // Determina o pool apropriado com base na propriedade 'wireframe' do fragmento
   const pool = frag.wireframe ? fragWireframePool : fragPool;
+
+  // Adiciona o fragmento de volta ao pool correspondente, agrupado por cor
   pool.get(frag.color).push(frag);
 };
 
+// Array para armazenar faíscas atuais
 const sparks = [];
+
+// Pool de faíscas
 const sparkPool = [];
 
+// Função para adicionar uma faísca com base nas coordenadas e velocidades fornecidas
 function addSpark(x, y, xD, yD) {
+  // Obtém uma faísca do pool ou cria um novo objeto faísca, se o pool estiver vazio
   const spark = sparkPool.pop() || {};
 
+  // Configura as propriedades da faísca com base nos parâmetros fornecidos
   spark.x = x + xD * 0.5;
   spark.y = y + yD * 0.5;
   spark.xD = xD;
   spark.yD = yD;
+
+  // Define a vida da faísca com um valor aleatório entre 200 e 300
   spark.life = random(200, 300);
   spark.maxLife = spark.life;
 
+  // Adiciona a faísca ao array 'sparks'
   sparks.push(spark);
 
+  // Retorna a faísca recém-criada ou reutilizada
   return spark;
 }
 
+// Função para criar uma explosão de faíscas em uma posição específica
 function sparkBurst(x, y, count, maxSpeed) {
+  // Calcula o incremento angular com base no número de faíscas desejadas
   const angleInc = TAU / count;
+
+  // Loop que itera sobre o número de faíscas desejadas
   for (let i = 0; i < count; i++) {
+    // Calcula um ângulo com base no incremento angular e adiciona um componente aleatória para variabilidade
     const angle = i * angleInc + angleInc * Math.random();
+
+    // Calcula uma velocidade aleatória com base na velocidade máxima fornecida
     const speed = (1 - Math.random() ** 3) * maxSpeed;
+
+    // Adiciona uma faísca na posição específica com a velocidade calculada
     addSpark(x, y, Math.sin(angle) * speed, Math.cos(angle) * speed);
   }
 }
 
+// Array para armazenar os vértices do objeto 'target' no momento da inicialização
 let glueShedVertices;
+
+// Função para gerar faíscas em determinadas posições com base nos vértices do objeto 'target'
 function glueShedSparks(target) {
+  // Verifica se os vértices ainda não foram inicializados
   if (!glueShedVertices) {
+    // Inicializa os vértices com uma cópia dos vértices do objeto 'target'
     glueShedVertices = cloneVertices(target.vertices);
   } else {
+    // Atualiza os vértices com uma cópia dos vértices do objeto 'target'
     copyVerticesTo(target.vertices, glueShedVertices);
   }
 
+  // Itera sobre cada vértice dos vértices do objeto 'target'
   glueShedVertices.forEach((v) => {
+    // Gera uma faísca com probabilidade de 40% para cada vértice
     if (Math.random() < 0.4) {
+      // Projeta o vértice para coordenadas de tela
       projectVertex(v);
+
+      // Adiciona uma faísca na posição do vértice com velocidades aleatórias
       addSpark(v.x, v.y, random(-12, 12), random(-12, 12));
     }
   });
 }
 
+// Função para devolver uma faísca ao pool
 function returnSpark(spark) {
+  // Adiciona a faísca de volta ao pool de faíscas
   sparkPool.push(spark);
 }
 
+//Este trecho de código manipula a renderização do HUD de pontuação
+// Seleciona o um opção do HUD (menu do jogo) utilizando a função $()
 const hudContainerNode = $(".hud");
 
+// Função para definir a visibilidade do HUD
 function setHudVisibility(visible) {
+  // Verifica se o HUD deve ser exibido ou oculto
   if (visible) {
+    // Se visível, define o estilo de exibição do contêiner HUD para "block"
     hudContainerNode.style.display = "block";
   } else {
+    // Se oculto, define o estilo de exibição do contêiner HUD para "none"
     hudContainerNode.style.display = "none";
   }
 }
 
+// Seleciona a opção do marcador de pontuação usando a função $()
 const scoreNode = $(".score-lbl");
+
+// Seleciona a opação do contador de cubos usando a função $()
 const cubeCountNode = $(".cube-count-lbl");
 
+// Função para renderizar o HUD de pontuação
 function renderScoreHud() {
+  // Verifica se o jogo é casual
   if (isCasualGame()) {
+    // Se for casual, oculta o nó do marcador de pontuação e ajusta a opacidade do nó do contador de cubos
     scoreNode.style.display = "none";
     cubeCountNode.style.opacity = 1;
   } else {
+    // Se não for casual, exibe o marcador de pontuação com o valor atual da pontuação do jogo
     scoreNode.innerText = `PONTOS: ${state.game.score}`;
     scoreNode.style.display = "block";
+
+    // Ajusta a opacidade do nó do contador de cubos
     cubeCountNode.style.opacity = 0.65;
   }
+
+  // Atualiza o texto do nó do contador de cubos com o número atual de cubos cortados no jogo
   cubeCountNode.innerText = `CUBOS CORTADOS: ${state.game.cubeCount}`;
 }
 
+// Renderiza o HUD de pontuação
 renderScoreHud();
 
+// Adiciona um manipulador de eventos de clique para o botão de pausa, chamando a função pauseGame()
 handlePointerDown($(".pause-btn"), () => pauseGame());
 
+// Seleciona os nós relacionados ao status de câmera lenta
 const slowmoNode = $(".slowmo");
 const slowmoBarNode = $(".slowmo__bar");
 
+// Função para renderizar o status de câmera lenta com base na porcentagem restante
 function renderSlowmoStatus(percentRemaining) {
+  // Define a opacidade do nó de câmera lenta com base na porcentagem restante
   slowmoNode.style.opacity = percentRemaining === 0 ? 0 : 1;
+
+  // Ajusta a transformação da barra de câmera lenta com base na porcentagem restante
   slowmoBarNode.style.transform = `scaleX(${percentRemaining.toFixed(3)})`;
 }
 
+// Seleciona os nós relacionados aos menus
 const menuContainerNode = $(".menus");
 const menuMainNode = $(".menu--main");
 const menuPauseNode = $(".menu--pause");
 const menuScoreNode = $(".menu--score");
 
+// Seleciona os nós relacionados aos rótulos de pontuação final e pontuação mais alta
 const finalScoreLblNode = $(".final-score-lbl");
 const highScoreLblNode = $(".high-score-lbl");
 
+// Função para exibir um menu, adicionando a classe "active"
 function showMenu(node) {
+  // Adiciona a classe "active", tornando-o visível
   node.classList.add("active");
 }
 
+// Função para ocultar um menu, removendo a classe "active"
 function hideMenu(node) {
+  // Remove a classe "active", tornando-o invisível
   node.classList.remove("active");
 }
 
+// Função para renderizar os menus com base no estado atual do jogo
 function renderMenus() {
+  // Oculta todos os menus inicialmente
   hideMenu(menuMainNode);
   hideMenu(menuPauseNode);
   hideMenu(menuScoreNode);
 
+  // Verifica o tipo de menu ativo no estado e exibe o menu correspondente
   switch (state.menus.active) {
     case MENU_MAIN:
+      // Exibe o menu principal
       showMenu(menuMainNode);
       break;
     case MENU_PAUSE:
+      // Exibe o menu de pausa
       showMenu(menuPauseNode);
       break;
     case MENU_SCORE:
+      // Atualiza os rótulos de pontuação final e pontuação mais alta e exibe o menu de pontuação
       finalScoreLblNode.textContent = formatNumber(state.game.score);
       if (isNewHighScore()) {
         highScoreLblNode.textContent = "Nova Pontuação!";
@@ -1112,144 +1226,198 @@ function renderMenus() {
       break;
   }
 
+  // Altera a visibilidade do HUD com base na negação da visibilidade do menu
   setHudVisibility(!isMenuVisible());
+
+  // Adiciona ou remove a classe "has-active" no contêiner do menu com base na visibilidade do menu
   menuContainerNode.classList.toggle("has-active", isMenuVisible());
+
+  // Adiciona ou remove a classe "interactive-mode" no contêiner do menu com base na visibilidade do menu e no estado do ponteiro
   menuContainerNode.classList.toggle(
     "interactive-mode",
     isMenuVisible() && pointerIsDown
   );
 }
 
+// Renderiza os menus para exibição inicial
 renderMenus();
 
+// Manipuladores de eventos de clique para diferentes elementos HTML
+// Botão "Jogar (Normal)" - Configura o modo de jogo, esconde o menu e reinicia o jogo no modo ranqueado
 handleClick($(".play-normal-btn"), () => {
   setGameMode(GAME_MODE_RANKED);
   setActiveMenu(null);
   resetGame();
 });
 
+// Botão "Jogar (Casual)" - Configura o modo de jogo, esconde o menu e reinicia o jogo no modo casual
 handleClick($(".play-casual-btn"), () => {
   setGameMode(GAME_MODE_CASUAL);
   setActiveMenu(null);
   resetGame();
 });
 
+// Botão "Continuar" - Resumo do jogo a partir do menu de pausa
 handleClick($(".resume-btn"), () => resumeGame());
+
+// Botão de menu de pausa - Retorna ao menu principal
 handleClick($(".menu-btn--pause"), () => setActiveMenu(MENU_MAIN));
 
+// Botão "Jogar Novamente" - Esconde o menu e reinicia o jogo
 handleClick($(".play-again-btn"), () => {
   setActiveMenu(null);
   resetGame();
 });
 
+// Botão do menu de pontuação - Retorna ao menu principal
 handleClick($(".menu-btn--score"), () => setActiveMenu(MENU_MAIN));
 
-handleClick($(".play-normal-btn"), () => {
-  setGameMode(GAME_MODE_RANKED);
-  setActiveMenu(null);
-  resetGame();
-});
-
-handleClick($(".play-casual-btn"), () => {
-  setGameMode(GAME_MODE_CASUAL);
-  setActiveMenu(null);
-  resetGame();
-});
-
-handleClick($(".resume-btn"), () => resumeGame());
-handleClick($(".menu-btn--pause"), () => setActiveMenu(MENU_MAIN));
-
-handleClick($(".play-again-btn"), () => {
-  setActiveMenu(null);
-  resetGame();
-});
-
-handleClick($(".menu-btn--score"), () => setActiveMenu(MENU_MAIN));
-
+// Define o menu ativo no estado do jogo e renderiza os menus
 function setActiveMenu(menu) {
+  // Atualiza o menu ativo no estado do jogo
   state.menus.active = menu;
+  // Renderiza os menus para refletir a alteração
   renderMenus();
 }
 
+// Define a pontuação no estado do jogo e atualiza o HUD de pontuação
 function setScore(score) {
+  // Atualiza a pontuação no estado do jogo
   state.game.score = score;
+  // Atualiza o HUD de pontuação para refletir a alteração
   renderScoreHud();
 }
 
+// Incrementa a pontuação no estado do jogo e atualiza o HUD de pontuação
 function incrementScore(inc) {
+  // Verifica se o jogo está em andamento antes de incrementar a pontuação
   if (isInGame()) {
+    // Incrementa a pontuação no estado do jogo
     state.game.score += inc;
+    // Garante que a pontuação não seja negativa
     if (state.game.score < 0) {
       state.game.score = 0;
     }
+    // Atualiza o HUD (menu) de pontuação para refletir a alteração
     renderScoreHud();
   }
 }
 
+// Define a contagem de cubos no estado do jogo e atualiza o HUD de pontuação
 function setCubeCount(count) {
+  // Atualiza a contagem de cubos no estado do jogo
   state.game.cubeCount = count;
+  // Atualiza o HUD de pontuação para refletir a alteração
   renderScoreHud();
 }
 
+// Incrementa a contagem de cubos no estado do jogo e atualiza o HUD de pontuação
 function incrementCubeCount(inc) {
+  // Verifica se o jogo está em andamento antes de incrementar a contagem de cubos
   if (isInGame()) {
+    // Incrementa a contagem de cubos no estado do jogo
     state.game.cubeCount += inc;
+    // Atualiza o HUD de pontuação para refletir a alteração
     renderScoreHud();
   }
 }
 
+// Define o modo de jogo no estado do jogo
 function setGameMode(mode) {
+  // Atualiza o modo de jogo no estado do jogo
   state.game.mode = mode;
 }
 
+// Reinicia o estado do jogo para começar uma nova partida
 function resetGame() {
+  // Reinicia todos os alvos no jogo
   resetAllTargets();
+  // Reinicia o cronômetro de tempo do jogo
   state.game.time = 0;
+  // Reinicia todos os cooldowns do jogo
   resetAllCooldowns();
+  // Define a pontuação inicial como zero
   setScore(0);
+  // Define a contagem de cubos como zero
   setCubeCount(0);
+  // Define o tempo de spawn para o atraso inicial
   spawnTime = getSpawnDelay();
 }
 
+// Pausa o jogo, se estiver em andamento, e exibe o menu de pausa
 function pauseGame() {
+  // Verifica se o jogo está em andamento antes de pausá-lo
   isInGame() && setActiveMenu(MENU_PAUSE);
 }
 
+// Retoma o jogo se estiver pausado, escondendo o menu de pausa
 function resumeGame() {
+  // Verifica se o jogo está pausado antes de retomá-lo
   isPaused() && setActiveMenu(null);
 }
 
+// Finaliza o jogo, exibe o menu de pontuação e verifica se há uma nova pontuação máxima
 function endGame() {
+  // Finaliza o rastreamento do ponteiro no canvas
   handleCanvasPointerUp();
+  // Verifica se há uma nova pontuação máxima e a atualiza, se necessário
   if (isNewHighScore()) {
     setHighScore(state.game.score);
   }
+  // Exibe o menu de pontuação
   setActiveMenu(MENU_SCORE);
 }
 
 window.addEventListener("keydown", (event) => {
+  // Verifica se a tecla pressionada é a tecla "p", pausa o jogo
   if (event.key === "p") {
-    isPaused() ? resumeGame() : pauseGame();
+    // Verifica se o jogo está pausado
+    if (isPaused()) {
+      // Se o jogo estiver pausado, retoma o jogo
+      resumeGame();
+    } else {
+      // Se o jogo não estiver pausado, pausa o jogo
+      pauseGame();
+    }
   }
 });
 
+// Tempo de spawn inicial para o próximo alvo
 let spawnTime = 0;
+
+// Posição máxima no eixo X para o spawn do alvo
 const maxSpawnX = 450;
+
+//  representando a mudança na posição do cursor
 const pointerDelta = { x: 0, y: 0 };
+
+//  usado para ajustar a velocidade do movimento do alvo
 const pointerDeltaScaled = { x: 0, y: 0 };
 
+// Duração do efeito de câmera lenta em milissegundos
 const slowmoDuration = 1500;
+
+// Tempo restante do efeito de câmera lenta
 let slowmoRemaining = 0;
+
+// Variável para ajustar o número de alvos extras que podem ser gerados durante o efeito de câmera lenta
 let spawnExtra = 0;
+
+// Atraso entre os spawns extras durante o efeito de câmera lenta
 const spawnExtraDelay = 300;
+
+// Velocidade inicial dos alvos
 let targetSpeed = 1;
 
 function tick(width, height, simTime, simSpeed, lag) {
+  // Início da medição de desempenho para o frame e o tick
   PERF_START("frame");
   PERF_START("tick");
 
+  // Atualiza o tempo de jogo
   state.game.time += simTime;
 
+  // Lógica para desaceleração do tempo ao ativar o slow motion
   if (slowmoRemaining > 0) {
     slowmoRemaining -= simTime;
     if (slowmoRemaining < 0) {
@@ -1257,39 +1425,57 @@ function tick(width, height, simTime, simSpeed, lag) {
     }
     targetSpeed = pointerIsDown ? 0.075 : 0.3;
   } else {
+    // Lógica para a velocidade do jogo normal
     const menuPointerDown = isMenuVisible() && pointerIsDown;
     targetSpeed = menuPointerDown ? 0.025 : 1;
   }
 
+  // Renderiza o status do slow motion
   renderSlowmoStatus(slowmoRemaining / slowmoDuration);
 
+  // Ajusta a velocidade do jogo com suavização
   gameSpeed += ((targetSpeed - gameSpeed) / 22) * lag;
   gameSpeed = clamp(gameSpeed, 0, 1);
 
+  // Coordenadas do centro da tela
   const centerX = width / 2;
   const centerY = height / 2;
 
+  // Coeficientes de arrasto do ar para simulação
   const simAirDrag = 1 - airDrag * simSpeed;
   const simAirDragSpark = 1 - airDragSpark * simSpeed;
 
+  // Multiplicador de força para ajuste
   const forceMultiplier = 1 / (simSpeed * 0.75 + 0.25);
+
+  // Zera as variações de posição do ponteiro
   pointerDelta.x = 0;
   pointerDelta.y = 0;
   pointerDeltaScaled.x = 0;
   pointerDeltaScaled.y = 0;
+
+  // Obtém o último ponto de toque
   const lastPointer = touchPoints[touchPoints.length - 1];
 
+  // Verifica se o ponteiro está pressionado, se há um último ponto de toque e se não houve interrupção no toque anterior
   if (pointerIsDown && lastPointer && !lastPointer.touchBreak) {
+    // Calcula as variações de posição do ponteiro
     pointerDelta.x = pointerScene.x - lastPointer.x;
     pointerDelta.y = pointerScene.y - lastPointer.y;
+
+    // Calcula as variações de posição escaladas com o multiplicador de força
     pointerDeltaScaled.x = pointerDelta.x * forceMultiplier;
     pointerDeltaScaled.y = pointerDelta.y * forceMultiplier;
   }
+
+  // Calcula a velocidade do ponteiro
   const pointerSpeed = Math.hypot(pointerDelta.x, pointerDelta.y);
   const pointerSpeedScaled = pointerSpeed * forceMultiplier;
 
+  // Atualiza o tempo de vida de todos os pontos de toque existentes
   touchPoints.forEach((p) => (p.life -= simTime));
 
+  // Se o ponteiro estiver pressionado, adiciona um novo ponto de toque
   if (pointerIsDown) {
     touchPoints.push({
       x: pointerScene.x,
@@ -1298,45 +1484,68 @@ function tick(width, height, simTime, simSpeed, lag) {
     });
   }
 
+  // Remove os pontos de toque mais antigos cuja vida tenha expirado
   while (touchPoints[0] && touchPoints[0].life <= 0) {
     touchPoints.shift();
   }
 
   PERF_START("entities");
 
+  // Decrementa o tempo de spawn com base no tempo de simulação
   spawnTime -= simTime;
+
+  // Verifica se é hora de criar um novo alvo
   if (spawnTime <= 0) {
+    // Verifica se há spawnExtra disponível para ser usado
     if (spawnExtra > 0) {
+      // Decrementa o contador de spawnExtra e reinicia o tempo de spawn
       spawnExtra--;
       spawnTime = spawnExtraDelay;
     } else {
+      // Define um novo tempo de spawn com base na função getSpawnDelay()
       spawnTime = getSpawnDelay();
     }
+
+    // Obtém um novo alvo
     const target = getTarget();
+
+    // Calcula um raio de spawn com base no centro da tela e um valor máximo
     const spawnRadius = Math.min(centerX * 0.8, maxSpawnX);
+
+    // Define as coordenadas x, y e z do alvo de forma aleatória dentro do raio de spawn
     target.x = Math.random() * spawnRadius * 2 - spawnRadius;
     target.y = centerY + targetHitRadius * 2;
     target.z = Math.random() * targetRadius * 2 - targetRadius;
+
+    // Define as velocidades iniciais em x e y do alvo de forma aleatória
     target.xD = Math.random() * ((target.x * -2) / 120);
     target.yD = -20;
+
+    // Adiciona o novo alvo à lista de alvos
     targets.push(target);
   }
 
-  const leftBound = -centerX + targetRadius;
-  const rightBound = centerX - targetRadius;
-  const ceiling = -centerY - 120;
-  const boundDamping = 0.4;
+  // Define os limites da tela e o coeficiente de amortecimento
+  const leftBound = -centerX + targetRadius; // Limite esquerdo
+  const rightBound = centerX - targetRadius; // Limite direito
+  const ceiling = -centerY - 120; // Teto
+  const boundDamping = 0.4; // Coeficiente de amortecimento
 
+  // Atualiza a posição dos alvos e aplica limites
   targetLoop: for (let i = targets.length - 1; i >= 0; i--) {
     const target = targets[i];
+
+    // Atualiza as posições com base na velocidade e no tempo de simulação
     target.x += target.xD * simSpeed;
     target.y += target.yD * simSpeed;
 
+    // Limita a posição vertical ao teto
     if (target.y < ceiling) {
       target.y = ceiling;
       target.yD = 0;
     }
 
+    // Aplica limites horizontais e inverte a direção com amortecimento ao atingir os limites
     if (target.x < leftBound) {
       target.x = leftBound;
       target.xD *= -boundDamping;
@@ -1345,79 +1554,111 @@ function tick(width, height, simTime, simSpeed, lag) {
       target.xD *= -boundDamping;
     }
 
+    // Aplica limite para a posição z (profundidade) e inverte a direção com amortecimento ao atingir o backboardZ
     if (target.z < backboardZ) {
       target.z = backboardZ;
       target.zD *= -boundDamping;
     }
 
+    // Aplica a aceleração devido à gravidade na direção vertical
     target.yD += gravity * simSpeed;
+
+    // Atualiza os ângulos de rotação com base nas velocidades angulares e no tempo de simulação
     target.rotateX += target.rotateXD * simSpeed;
     target.rotateY += target.rotateYD * simSpeed;
     target.rotateZ += target.rotateZD * simSpeed;
+
+    // Aplica a transformação 3D aos vértices do alvo
     target.transform();
+
+    // Projeta as coordenadas 3D transformadas para coordenadas 2D de tela
     target.project();
 
+    // Verifica se o alvo ultrapassou a linha de corte na direção vertical
     if (target.y > centerY + targetHitRadius * 2) {
+      // Remove o alvo da lista de alvos
       targets.splice(i, 1);
+
+      // Retorna o alvo à respectiva pool de objetos reutilizáveis
       returnTarget(target);
+
+      // Realiza ações com base no estado do jogo
       if (isInGame()) {
+        // Se for um jogo casual, decrementa a pontuação
+        // Caso contrário, encerra o jogo
         if (isCasualGame()) {
           incrementScore(-25);
         } else {
           endGame();
         }
       }
+
+      // Continua para o próximo alvo
       continue;
     }
 
+    // Calcula o número de testes de colisão com base na velocidade do ponteiro e no raio do alvo
     const hitTestCount = Math.ceil((pointerSpeed / targetRadius) * 2);
 
+    // Loop para realizar testes de colisão entre o ponteiro e o alvo
     for (let ii = 1; ii <= hitTestCount; ii++) {
+      // Calcula a posição de colisão ao longo do caminho do ponteiro
       const percent = 1 - ii / hitTestCount;
       const hitX = pointerScene.x - pointerDelta.x * percent;
       const hitY = pointerScene.y - pointerDelta.y * percent;
+
+      // Calcula a distância entre a posição de colisão e a projeção do alvo no plano 2D
       const distance = Math.hypot(
         hitX - target.projected.x,
         hitY - target.projected.y
       );
 
+      // Verifica se ocorreu uma colisão
       if (distance <= targetHitRadius) {
         if (!target.hit) {
+          // Atualiza propriedades do alvo e adiciona efeitos de colisão
           target.hit = true;
-
           target.xD += pointerDeltaScaled.x * hitDampening;
           target.yD += pointerDeltaScaled.y * hitDampening;
           target.rotateXD += pointerDeltaScaled.y * 0.001;
           target.rotateYD += pointerDeltaScaled.x * 0.001;
 
+          // Calcula a velocidade das partículas de faísca com base na velocidade do ponteiro
           const sparkSpeed = 7 + pointerSpeedScaled * 0.125;
 
           if (pointerSpeedScaled > minPointerSpeed) {
+            // Atualiza pontuação e saúde do alvo após uma colisão bem-sucedida
             target.health--;
             incrementScore(10);
 
             if (target.health <= 0) {
+              // Cria uma explosão de partículas e faíscas ao destruir o alvo
               incrementCubeCount(1);
               createBurst(target, forceMultiplier);
               sparkBurst(hitX, hitY, 8, sparkSpeed);
               if (target.wireframe) {
+                // Ativa o efeito de câmera lenta e gera alvos adicionais após destruir um alvo de arame
                 slowmoRemaining = slowmoDuration;
                 spawnTime = 0;
                 spawnExtra = 2;
               }
+              // Remove o alvo do array de alvos e o retorna ao pool
               targets.splice(i, 1);
               returnTarget(target);
             } else {
+              // Cria faíscas e atualiza a saúde do alvo após uma colisão
               sparkBurst(hitX, hitY, 8, sparkSpeed);
               glueShedSparks(target);
               updateTargetHealth(target, 0);
             }
           } else {
+            // Incrementa a pontuação para colisões de baixa velocidade
             incrementScore(5);
             sparkBurst(hitX, hitY, 3, sparkSpeed);
           }
         }
 
+        // Continua para o próximo alvo
         continue targetLoop;
       }
     }
@@ -1425,73 +1666,105 @@ function tick(width, height, simTime, simSpeed, lag) {
     target.hit = false;
   }
 
+  // Z-coordenada da parte de trás, ajustada para acomodar as partículas
   const fragBackboardZ = backboardZ + fragRadius;
 
+  // Limites horizontais para as partículas
   const fragLeftBound = -width;
   const fragRightBound = width;
 
+  // Loop para atualizar as partículas (frags) no cenário
   for (let i = frags.length - 1; i >= 0; i--) {
     const frag = frags[i];
+
+    // Atualização da posição das partículas com base na velocidade e arrasto
     frag.x += frag.xD * simSpeed;
     frag.y += frag.yD * simSpeed;
     frag.z += frag.zD * simSpeed;
 
+    // Aplicação de arrasto às velocidades das partículas
     frag.xD *= simAirDrag;
     frag.yD *= simAirDrag;
     frag.zD *= simAirDrag;
 
+    // Restrição da posição vertical da partícula
     if (frag.y < ceiling) {
       frag.y = ceiling;
       frag.yD = 0;
     }
 
+    // Restrição da posição em Z da partícula em relação à parte de trás do tabuleiro
     if (frag.z < fragBackboardZ) {
       frag.z = fragBackboardZ;
       frag.zD *= -boundDamping;
     }
 
+    // Aplicação da força da gravidade na direção vertical
     frag.yD += gravity * simSpeed;
+
+    // Atualização das rotações das partículas
     frag.rotateX += frag.rotateXD * simSpeed;
     frag.rotateY += frag.rotateYD * simSpeed;
     frag.rotateZ += frag.rotateZD * simSpeed;
+
+    // Transformação e projeção da partícula no cenário
     frag.transform();
     frag.project();
 
+    // Verificação se a partícula saiu dos limites ou ultrapassou a posição Z de desvanecimento da câmera
     if (
       frag.projected.y > centerY + targetHitRadius ||
       frag.projected.x < fragLeftBound ||
       frag.projected.x > fragRightBound ||
       frag.z > cameraFadeEndZ
     ) {
+      // Remoção da partícula caso tenha saído dos limites
       frags.splice(i, 1);
       returnFrag(frag);
       continue;
     }
   }
 
+  // Loop para atualizar as faíscas (sparks) no cenário
   for (let i = sparks.length - 1; i >= 0; i--) {
     const spark = sparks[i];
+
+    // Redução do tempo de vida da faísca
     spark.life -= simTime;
+
+    // Verificação se a faísca atingiu o fim de sua vida
     if (spark.life <= 0) {
+      // Remoção da faísca caso tenha atingido o fim de sua vida
       sparks.splice(i, 1);
       returnSpark(spark);
       continue;
     }
+
+    // Atualização da posição da faísca com base na velocidade e arrasto
     spark.x += spark.xD * simSpeed;
     spark.y += spark.yD * simSpeed;
+
+    // Aplicação de arrasto às velocidades da faísca
     spark.xD *= simAirDragSpark;
     spark.yD *= simAirDragSpark;
+
+    // Aplicação da força da gravidade na direção vertical da faísca
     spark.yD += gravity * simSpeed;
   }
 
+  // Fim da medição de desempenho para entidades (entities)
   PERF_END("entities");
 
+  // Início da medição de desempenho para renderização 3D
   PERF_START("3D");
 
+  // Limpeza dos arrays que armazenam vértices e polígonos para renderização
   allVertices.length = 0;
   allPolys.length = 0;
   allShadowVertices.length = 0;
   allShadowPolys.length = 0;
+
+  // Iteração sobre os alvos (targets) para coletar vértices e polígonos
   targets.forEach((entity) => {
     allVertices.push(...entity.vertices);
     allPolys.push(...entity.polys);
@@ -1499,6 +1772,7 @@ function tick(width, height, simTime, simSpeed, lag) {
     allShadowPolys.push(...entity.shadowPolys);
   });
 
+  // Iteração sobre os fragmentos (frags) para coletar vértices e polígonos
   frags.forEach((entity) => {
     allVertices.push(...entity.vertices);
     allPolys.push(...entity.polys);
@@ -1506,25 +1780,29 @@ function tick(width, height, simTime, simSpeed, lag) {
     allShadowPolys.push(...entity.shadowPolys);
   });
 
+  // Computação das normais dos polígonos no espaço da tela e cálculo da profundidade
   allPolys.forEach((p) => computePolyNormal(p, "normalWorld"));
   allPolys.forEach(computePolyDepth);
   allPolys.sort((a, b) => b.depth - a.depth);
 
+  // Projeção dos vértices no espaço da câmera
   allVertices.forEach(projectVertex);
 
+  // Computação das normais dos polígonos no espaço da câmera
   allPolys.forEach((p) => computePolyNormal(p, "normalCamera"));
 
   PERF_END("3D");
 
   PERF_START("shadows");
 
+  // Transformação dos vértices das sombras
   transformVertices(
     allShadowVertices,
     allShadowVertices,
     0,
     0,
     0,
-    TAU / 8,
+    TAU / 8, // Rotação em torno do eixo Y por um oitavo de volta (45 graus)
     0,
     0,
     1,
@@ -1532,14 +1810,18 @@ function tick(width, height, simTime, simSpeed, lag) {
     1
   );
 
+  // Cálculo das normais das sombras 
   allShadowPolys.forEach((p) => computePolyNormal(p, "normalWorld"));
 
+  // Ajuste da posição das sombras com base na distância do backboard
   const shadowDistanceMult = Math.hypot(1, 1);
   const shadowVerticesLength = allShadowVertices.length;
   for (let i = 0; i < shadowVerticesLength; i++) {
     const distance = allVertices[i].z - backboardZ;
     allShadowVertices[i].z -= shadowDistanceMult * distance;
   }
+
+  // Transformação dos vértices das sombras
   transformVertices(
     allShadowVertices,
     allShadowVertices,
@@ -1560,17 +1842,23 @@ function tick(width, height, simTime, simSpeed, lag) {
   PERF_END("tick");
 }
 
+// Função para renderizar os elementos do jogo no contexto 2D do canvas
 function draw(ctx, width, height, viewScale) {
   PERF_START("draw");
 
+  // Calcula as coordenadas do centro do canvas
   const halfW = width / 2;
   const halfH = height / 2;
 
+  // Configura o estilo de união das linhas
   ctx.lineJoin = "bevel";
 
+  // Início de medição de desempenho para desenhar sombras
   PERF_START("drawShadows");
+  // Configuração de cor para sombras
   ctx.fillStyle = shadowColor;
   ctx.strokeStyle = shadowColor;
+  // Itera sobre todos os polígonos de sombra
   allShadowPolys.forEach((p) => {
     if (p.wireframe) {
       ctx.lineWidth = 2;
@@ -1599,13 +1887,16 @@ function draw(ctx, width, height, viewScale) {
       ctx.fill();
     }
   });
+  // Fim de medição de desempenho para desenhar sombras
   PERF_END("drawShadows");
-
+  // Início de medição de desempenho para desenhar polígonos
   PERF_START("drawPolys");
 
+  // Itera sobre todos os polígonos
   allPolys.forEach((p) => {
     if (!p.wireframe && p.normalCamera.z < 0) return;
 
+    // Ignora polígonos sem preenchimento que estão atrás da câmera
     if (p.strokeWidth !== 0) {
       ctx.lineWidth =
         p.normalCamera.z < 0 ? p.strokeWidth * 0.5 : p.strokeWidth;
@@ -1617,6 +1908,7 @@ function draw(ctx, width, height, viewScale) {
     const lastV = vertices[vertices.length - 1];
     const fadeOut = p.middle.z > cameraFadeStartZ;
 
+    // Configurações para preenchimento do polígono
     if (!p.wireframe) {
       const normalLight = p.normalWorld.y * 0.5 + p.normalWorld.z * -0.5;
       const lightness =
@@ -1626,6 +1918,7 @@ function draw(ctx, width, height, viewScale) {
       ctx.fillStyle = shadeColor(p.color, lightness);
     }
 
+    // Aplica a redução de opacidade para polígonos fora da visão da câmera
     if (fadeOut) {
       ctx.globalAlpha = Math.max(
         0,
@@ -1633,6 +1926,7 @@ function draw(ctx, width, height, viewScale) {
       );
     }
 
+    // Desenha os polígonos
     ctx.beginPath();
     ctx.moveTo(lastV.x, lastV.y);
     for (let v of vertices) {
@@ -1642,18 +1936,24 @@ function draw(ctx, width, height, viewScale) {
     if (!p.wireframe) {
       ctx.fill();
     }
+
+    // Desenha a borda se a largura da borda for diferente de zero
     if (p.strokeWidth !== 0) {
       ctx.stroke();
     }
 
+    // Restaura a opacidade global se houve redução
     if (fadeOut) {
       ctx.globalAlpha = 1;
     }
   });
+  // Fim de medição de desempenho para desenhar polígonos
   PERF_END("drawPolys");
 
+  // Início de medição de desempenho para desenhar elementos 2D
   PERF_START("draw2D");
 
+  // Configurações para faíscas
   ctx.strokeStyle = sparkColor;
   ctx.lineWidth = sparkThickness;
   ctx.beginPath();
@@ -1665,112 +1965,165 @@ function draw(ctx, width, height, viewScale) {
   });
   ctx.stroke();
 
+  // Configurações para desenhar trilhas de toque
   ctx.strokeStyle = touchTrailColor;
   const touchPointCount = touchPoints.length;
+  // Itera sobre os pontos de toque
   for (let i = 1; i < touchPointCount; i++) {
     const current = touchPoints[i];
     const prev = touchPoints[i - 1];
+    // Ignora pontos de quebra no toque
     if (current.touchBreak || prev.touchBreak) {
       continue;
     }
+
+    // Calcula a escala com base na vida do ponto de toque
     const scale = current.life / touchPointLife;
+
+    // Desenha a trilha entre os pontos de toque
     ctx.lineWidth = scale * touchTrailThickness;
     ctx.beginPath();
     ctx.moveTo(prev.x, prev.y);
     ctx.lineTo(current.x, current.y);
     ctx.stroke();
   }
-
+  // Fim de medição de desempenho para desenhar elementos 2D
   PERF_END("draw2D");
 
+  // Fim de medição de desempenho para desenhar
   PERF_END("draw");
+
+  // Fim de medição de desempenho para o frame
   PERF_END("frame");
 
+  // Atualiza as métricas de desempenho
   PERF_UPDATE();
 }
 
+// Configuração inicial do canvas
 function setupCanvases() {
+  // Obtém o contexto 2D do canvas
   const ctx = canvas.getContext("2d");
 
+  // Obtém o rácio de pixels do dispositivo (DPR)
   const dpr = window.devicePixelRatio || 1;
 
+  // Variáveis para escala de visualização e dimensões do canvas
   let viewScale;
-
   let width, height;
 
+  // Função para lidar com o redimensionamento da janela
   function handleResize() {
+    // Obtém as dimensões da janela
     const w = window.innerWidth;
     const h = window.innerHeight;
+
+    // Calcula a escala de visualização
     viewScale = h / 1000;
+
+    // Calcula as dimensões do canvas ajustadas pela escala
     width = w / viewScale;
     height = h / viewScale;
+
+    // Define as dimensões físicas do canvas e ajusta o estilo para o tamanho visual
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     canvas.style.width = w + "px";
     canvas.style.height = h + "px";
   }
 
+  // Chama a função de redimensionamento inicial
   handleResize();
 
+  // Adiciona um ouvinte de eventos para redimensionamento da janela
   window.addEventListener("resize", handleResize);
 
+  // Variável para armazenar o último timestamp do frame
   let lastTimestamp = 0;
+
+  // Função de manipulação de quadro principal
   function frameHandler(timestamp) {
+    // Calcula o tempo decorrido desde o último quadro
     let frameTime = timestamp - lastTimestamp;
     lastTimestamp = timestamp;
 
+    // Chama a função para solicitar o próximo quadro
     raf();
 
+    // Se o jogo estiver pausado, interrompe a execução
     if (isPaused()) return;
 
+    // Limita o tempo de frame para evitar grandes saltos em caso de pausa
     if (frameTime < 0) {
       frameTime = 17;
     } else if (frameTime > 68) {
       frameTime = 68;
     }
 
+    // Calcula as coordenadas do ponteiro na cena
     const halfW = width / 2;
     const halfH = height / 2;
-
     pointerScene.x = pointerScreen.x / viewScale - halfW;
     pointerScene.y = pointerScreen.y / viewScale - halfH;
 
+    // Calcula o lag e o tempo de simulação com base no tempo de quadro
     const lag = frameTime / 16.6667;
     const simTime = gameSpeed * frameTime;
     const simSpeed = gameSpeed * lag;
+
+    // Chama a função principal de atualização do jogo (tick)
     tick(width, height, simTime, simSpeed, lag);
 
+    // Limpa o canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Aplica a escala de desenho e a translação para centrar a cena
     const drawScale = dpr * viewScale;
     ctx.scale(drawScale, drawScale);
     ctx.translate(halfW, halfH);
+
+    // Chama a função de desenho principal
     draw(ctx, width, height, viewScale);
+
+    // Restaura a transformação do contexto para o estado inicial
     ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
+
+  // Função para solicitar o próximo quadro
   const raf = () => requestAnimationFrame(frameHandler);
 
+  // Inicializa o loop de quadros
   raf();
 }
 
+// Função chamada quando o ponteiro é pressionado no canvas
 function handleCanvasPointerDown(x, y) {
+  // Verifica se o ponteiro não estava pressionado antes
   if (!pointerIsDown) {
+    // Marca que o ponteiro está pressionado
     pointerIsDown = true;
+    // Atualiza as coordenadas do ponteiro na tela
     pointerScreen.x = x;
     pointerScreen.y = y;
 
+    // Se o menu estiver visível, renderiza os menus para refletir a mudança
     if (isMenuVisible()) renderMenus();
   }
 }
 
+// Função chamada quando o ponteiro é liberado no canvas
 function handleCanvasPointerUp() {
+  // Verifica se o ponteiro estava pressionado antes
   if (pointerIsDown) {
+    // Marca que o ponteiro não está mais pressionado
     pointerIsDown = false;
+    // Adiciona um ponto de toque indicando uma interrupção no toque
     touchPoints.push({
       touchBreak: true,
       life: touchPointLife,
     });
 
+    // Se o menu estiver visível, renderiza os menus para refletir a mudança
     if (isMenuVisible()) renderMenus();
   }
 }
