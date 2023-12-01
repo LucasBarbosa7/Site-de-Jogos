@@ -19,7 +19,7 @@ discutido extensivamente para decidir a estratégia, os jogos e suas caracterís
 envolventes com simulação de "IA" e manipulação de objetos 2D e 3D. Ênfase na seleção 
 cuidadosa de jogos, linguagem e características específicas
 
-<h1>Euipe responsável pelo Projeto:</h1>
+<h1>Equipe responsável pelo Projeto:</h1>
 
 - Deborah Lohanne Fernandes de Oliveira - Pesquisadora
 - Jenniffer Glenda da Silva Santos - Desenvolvedora
@@ -84,7 +84,7 @@ Nossos jogos são inspirados em clássicos atemporais e minigames populares. Alg
 
 Todos os jogos foram desenvolvidos usando JavaScript, para entender melhor sobre cada jogo e suas funcionalidades e características, basta acessar o nosso código, que esta totalmente comentado nas pasta ".js".</br>
 Por exemplo, para entender melhor sobre com que funciona a nossa "IA simulada", no jogo do pong, basta acessar a pasta Jogo-Pong, depois entar na game.js.</br>
-No jogo cubo ninjo, no qual usamos uma modelagem 3d para representar os cubos, fazer as sombras e os movimentos de corte. No caso e so acessar a pasta Jogo-Fruit, depois entar na pasta jogoFruit.js.</br> O mesmo vale para todos os outros jogos do nosso site. </br></br>
+No jogo cubo ninjo, no qual usamos uma modelagem 3D para representar os cubos, fazer as sombras e os movimentos de corte. No caso e so acessar a pasta Jogo-Fruit, depois entar na pasta jogoFruit.js.</br> O mesmo vale para todos os outros jogos do nosso site. </br></br>
 Por fim, na página "Links", que se encontra no menu superior. Temos links para as documentações e repositórios importantes, onde
 tem exemplos, as mecânicas usados no jogo e a documentação do Canvas.
 
