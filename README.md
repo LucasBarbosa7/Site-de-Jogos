@@ -19,7 +19,7 @@ discutido extensivamente para decidir a estratégia, os jogos e suas caracterís
 envolventes com simulação de "IA" e manipulação de objetos 2D e 3D. Ênfase na seleção 
 cuidadosa de jogos, linguagem e características específicas
 
-<h1>Euipe reponsavel responsável pelo Projeto:</h1>
+<h1>Euipe responsável pelo Projeto:</h1>
 
 - Deborah Lohanne Fernandes de Oliveira - Pesquisadora
 - Jenniffer Glenda da Silva Santos - Desenvolvedora
