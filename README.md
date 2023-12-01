@@ -43,7 +43,7 @@ Abaixo estão listados todos os jogos desenvolvidos, todos possuem Descrição e
 ### Jogo Cubo Ninja: 🐱‍👤
 
 - Descrição: Corte os cubos até atingir a maior pontuação.
-- Como Jogar: Arrate o mouse, segurando com o botão direito para fazer o movimento de corte nos cubos adjacentes para corta-los, assim que eles aparecerem. Se o cubo cair e o jogador não fazer esses movimentos, o jogador perderá a partida. Isso no modo de jogo CLÁSSICO (PLAY), no mode CASUAL o jogador não precisa se preucupar em cortar todos os cubos, apenar jogar e se divertir. 
+- Como Jogar: Arrate o mouse, segurando com o botão direito para fazer o movimento de corte nos cubos adjacentes para corta-los, assim que eles aparecerem. Se o cubo cair e o jogador não fazer esses movimentos, o jogador perderá a partida. Isso no modo de jogo CLÁSSICO (PLAY), no mode CASUAL o jogador não precisa se preocupar em cortar todos os cubos, apenar jogar e se divertir. 
 
 
 ### Jogo Pong: 🏓
