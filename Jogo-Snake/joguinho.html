@@ -3,28 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site de Jojos</title>
+    <title>Snake Game</title>
     <link rel="stylesheet" href="./joguinho.css">
-
 </head>
-
 <body>
 
     <header>
         <nav class="menu">
             <ul>
               <li><a href="../index.html">Página Inicial</a></li>
-              <li><a href="../Sobre/sobre.html">Alunos</a></li>
-              <li><a href="../referencias/referencias.html">Links </a></li>
             </ul>
         </nav>
     </header>
 
     <div id="game-container">
-        <canvas id="game-canvas" width="500" height="400" style=""></canvas>
+        <canvas id="game-canvas" width="400" height="400"></canvas>
         <p>Pontuação: <span id="score">0</span></p>
         <button id="restart-button">Reiniciar</button>
     </div>
+
+    <audio id="eat-sound" src="eat.mp3" preload="auto"></audio>
 
     <script src="./joguinho.js"></script>
 </body>
